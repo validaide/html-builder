@@ -3,7 +3,7 @@
 use Validaide\HtmlBuilder\HTML;
 
 /**
- * Attempt to do script injection
+ * Attempt to do XSS
  */
 return function () {
     return HTML::create('p')
