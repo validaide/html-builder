@@ -9,7 +9,7 @@ And you are right! I :heart: Twig! But in turns out our code base still finds it
 Take the example below:
 
 ```php
-public function userStateToIcon(User $user)
+public function userStateToIcon(User $user): string
 {
   return sprintf('<span class="%s" id="%s" data-username="%s"></span>', strtolower($user->getState()), $user->getId(), $user->getUsername()):
 }
@@ -18,23 +18,29 @@ public function userStateToIcon(User $user)
 Now, despite that the above can be optimized still, the last return statement is the one we are trying to simplify:
 
 ```php
-HTML::create('span')
-  ->class(strtolower($user->getState())
-  ->id($user->getId())
-  ->attr('data-username',$user->getUsername());
+public function userStateToIcon(User $user): HTMLTag
+{
+  return HTML::create('span')
+          ->class(strtolower($user->getState())
+          ->id($user->getId())
+          ->attr('data-username',$user->getUsername());
+}
 ```
 
 Now, in number of characters written, it is not necessarily faster, but it will ensure:
 1. Valid HTML is generated
 2. Safe HTML is generated
-3. It is easier to modify the 'HTML' being built, afterwards
+3. Easier modification of the 'HTML' being built afterwards
 
 ## Installation
 
-Our big friend [Composer](https://getcomposer.org/) to the rescue - :heart: Composer, BTW:
+Our big friend [Composer](https://getcomposer.org/) to the rescue using [Packagist](https://packagist.org/) of course:
 ```
-composer install validaide/html-builder
+composer require validaide/html-builder
 ```
+
+:heart: Composer
+:heart: Packagist
 
 ## Examples
 1. Plain tag:
