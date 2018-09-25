@@ -14,13 +14,11 @@ class HTML
     /** @var string */
     private $name = '';
     /** @var array */
-    private $arguments = [];
+    private $attributes = [];
     /** @var HTML[] */
     private $content = [];
     /** @var null|HTML */
     private $parent;
-    /** @var int */
-    private $level;
 
     /**
      * TagElement constructor.
@@ -32,11 +30,6 @@ class HTML
     {
         $this->name   = $name;
         $this->parent = $parent;
-        if (is_null($parent)) {
-            $this->level = 0;
-        } else {
-            $this->level = $parent->getLevel() + 1;
-        }
 
         return $this;
     }
@@ -47,14 +40,6 @@ class HTML
     public function __toString(): string
     {
         return $this->renderTag();
-    }
-
-    /**
-     * @return int
-     */
-    public function getLevel(): int
-    {
-        return $this->level;
     }
 
     /**
@@ -81,6 +66,8 @@ class HTML
     }
 
     /**
+     * Create a Html tag
+     *
      * @param string $name
      *
      * @return HTML
@@ -93,6 +80,8 @@ class HTML
     }
 
     /**
+     * Open a HTML tag
+     *
      * @param string $name
      *
      * @return HTML
@@ -107,6 +96,8 @@ class HTML
     }
 
     /**
+     * Add text inside the tag
+     *
      * @param string $text
      *
      * @return HTML
@@ -121,6 +112,8 @@ class HTML
     }
 
     /**
+     * Close a HTML tag
+     *
      * @return HTML
      */
     public function end(): HTML
@@ -133,36 +126,83 @@ class HTML
     }
 
     /**
+     * Set an attribute
+     *
      * @param string $key
      * @param string $value
      *
      * @return HTML
      */
-    public function arg(string $key, string $value): self
+    public function attr(string $key, string $value): self
     {
-        $this->arguments[$key] = $value;
+        $this->attributes[$key] = $value;
 
         return $this;
     }
 
     /**
+     * Synonym for 'attr'
+     *
+     * @param string $key
+     * @param string $value
+     *
+     * @return HTML
+     */
+    public function attribute(string $key, string $value): self
+    {
+        return $this->attr($key, $value);
+    }
+
+    /**
+     * Remove an attribute
+     *
      * @param string $key
      *
      * @return HTML
      */
-    public function rarg(string $key): self
+    public function rattr(string $key): self
     {
-        unset($this->arguments[$key]);
+        unset($this->attributes[$key]);
 
         return $this;
     }
 
     /**
-     * @param HTML $parent
+     * Synonym for 'rattr'
+     *
+     * @param string $key
+     *
+     * @return HTML
      */
-    private function setParent(HTML $parent)
+    public function removeAttribute(string $key): self
     {
-        $this->parent = $parent;
+        return $this->rattr($key);
+    }
+
+    // Attribute shorthands
+
+    /**
+     * Set the id attribute
+     *
+     * @param string $value
+     *
+     * @return HTML
+     */
+    public function id(string $value): self
+    {
+        return $this->attr('id', $value);
+    }
+
+    /**
+     * Set the class attribute
+     *
+     * @param string $value
+     *
+     * @return HTML
+     */
+    public function class(string $value): self
+    {
+        return $this->attr('class', $value);
     }
 
     /**
@@ -174,8 +214,6 @@ class HTML
     }
 
     /**
-     * @param bool $pretty
-     *
      * @return string
      */
     private function renderTag(): string
@@ -183,7 +221,7 @@ class HTML
         return sprintf(
             "<%s%s>%s</%s>",
             $this->name,
-            count($this->arguments) === 0 ? '' : ' ' . $this->renderAttributes(),
+            count($this->attributes) === 0 ? '' : ' ' . $this->renderAttributes(),
             $this->renderTags(),
             $this->name
         );
@@ -194,10 +232,10 @@ class HTML
      */
     private function renderAttributes(): string
     {
-        ksort($this->arguments);
+        ksort($this->attributes);
 
         $argumentArray = [];
-        foreach ($this->arguments as $argument => $value) {
+        foreach ($this->attributes as $argument => $value) {
             $argumentArray[] = sprintf("%s=\"%s\"", $argument, $value);
         }
 
@@ -214,7 +252,9 @@ class HTML
             if ($tag instanceof HTML) {
                 $result .= $tag->html();
             } else if ($tag instanceof Text) {
-                $result .= $tag->render();
+                // Make sure the content is 'safe'
+                // @see http://php.net/manual/en/function.htmlspecialchars.php
+                $result .= htmlspecialchars($tag->render());
             }
         }
 

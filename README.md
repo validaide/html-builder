@@ -1,8 +1,9 @@
 # Validaide HtmlBuilder
+Validaide's HTML builder is a small library with a fluent interface to generate snippets of HTML code.
 
 ## Introduction
-... is a small library with a fluent interface to generate snippets of HTML code.
-Why in God's name would you need such a thing!? We have, I don't know, awesome stuff like [Twig](https://twig.symfony.com/), right!?
+Alright, so some might say: *"Why in God's name would you need such a thing!?"*.
+And indeed, we have, I don't know, awesome stuff like [Twig](https://twig.symfony.com/), right!?
 And you are right! I :heart: Twig! But in turns out our code base still finds itself with small helper methods that generate tiny snippets of HTML.
 
 Take the example below:
@@ -10,25 +11,7 @@ Take the example below:
 ```php
 public function userStateToIcon(User $user)
 {
-  switch ($user->getState()->value()) {
-    case UserState::PENDING: {
-      $class = 'pending';
-      break;
-    }
-    case UserState::ACTIVE: {
-      $class = 'active';
-      break;
-    }
-    case UserState::SUSPENDED: {
-      $class = 'suspended';
-      break;
-    }
-    default: {
-      throw new \LogicException(sprintf("Unsupported User Type: %s", $user->getState()->value()));
-    }
-  }
-  
-  return sprintf('<span class="%s" id="%s" data-username="%s"></span>', $class, $user->getId(), $user->getUsername()):
+  return sprintf('<span class="%s" id="%s" data-username="%s"></span>', strtolower($user->getState()), $user->getId(), $user->getUsername()):
 }
 ```
 
@@ -36,7 +19,7 @@ Now, despite that the above can be optimized still, the last return statement is
 
 ```php
 HTML::create('span')
-  ->class($class)
+  ->class(strtolower($user->getState())
   ->id($user->getId())
   ->attr('data-username',$user->getUsername());
 ```
@@ -48,7 +31,7 @@ Now, in number of characters written, it is not necessarily faster, but it will 
 
 ## Installation
 
-Our big friend [Composer](https://getcomposer.org/) to the rescue:
+Our big friend [Composer](https://getcomposer.org/) to the rescue - :heart: Composer, BTW:
 ```
 composer install validaide/html-builder
 ```

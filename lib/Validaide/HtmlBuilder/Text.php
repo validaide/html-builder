@@ -11,8 +11,6 @@ class Text
     private $text;
     /** @var null|HTML */
     private $parent;
-    /** @var int */
-    private $level;
 
     /**
      * TextElement constructor.
@@ -24,11 +22,6 @@ class Text
     {
         $this->text   = $text;
         $this->parent = $parent;
-        if (is_null($parent)) {
-            $this->level = 0;
-        } else {
-            $this->level = $parent->getLevel() + 1;
-        }
 
         return $this;
     }
@@ -39,14 +32,6 @@ class Text
     public function __toString(): string
     {
         return $this->render();
-    }
-
-    /**
-     * @return int
-     */
-    public function getLevel(): int
-    {
-        return $this->level;
     }
 
     /**

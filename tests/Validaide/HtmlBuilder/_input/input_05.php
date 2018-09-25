@@ -5,7 +5,7 @@ use Validaide\HtmlBuilder\HTML;
 //
 return function () {
     return HTML::create('h1')
-        ->arg('class', 'text-muted')
+        ->attr('class', 'text-muted')
         ->text('monkey')
         ->text(' & ')
         ->text('farts');
