@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Validaide Library: Common" default="unittest">
+    <!--************-->
+    <!-- PROPERTIES -->
+    <!--************-->
+    <property name="build.dir" location="${basedir}/var/build"/>
+
+    <!--************-->
+    <!-- CONDITIONS -->
+    <!--************-->
+    <condition property="isLinux" else="false">
+        <equals arg1="${os.name}" arg2="Linux"/>
+    </condition>
+    <condition property="isMac" else="false">
+        <equals arg1="${os.name}" arg2="Mac OS X"/>
+    </condition>
+
+    <condition property="paratest.num_processes" value="4" else="3">
+        <equals arg1="${isLinux}" arg2="true"/>
+    </condition>
+    <condition property="behat.num_processes" value="5" else="3">
+        <equals arg1="${isLinux}" arg2="true"/>
+    </condition>
+    <condition property="xdebug.extension.path" value="xdebug.so" else="/Applications/MAMP/bin/php/php7.1.12/lib/php/extensions/no-debug-non-zts-20160303/xdebug.so">
+        <equals arg1="${isLinux}" arg2="true"/>
+    </condition>
+
+    <!--************-->
+    <!-- RECORDS    -->
+    <!--************-->
+    <!--<record name="${build.dir}/build.log" loglevel="verbose" action="start"/>-->
+
+    <!--*********-->
+    <!-- TARGETS -->
+    <!--*********-->
+    <target name="clean-cache" description="Clean cache files">
+        <echo message="Cleaning cache.."/>
+        <delete includeEmptyDirs="true" failonerror="false">
+            <fileset dir="${basedir}/var/cache" includes="**/*" excludes="*.*"/>
+        </delete>
+    </target>
+    <target name="clean-logs" description="Clean log files">
+        <echo message="Cleaning log files.."/>
+        <delete includeEmptyDirs="true" failonerror="false">
+            <fileset dir="${basedir}/var/logs">
+                <include name="*.log"/>
+            </fileset>
+        </delete>
+    </target>
+    <target name="clean-build-files" description="Clean build files">
+        <echo message="Cleaning build files.."/>
+        <delete failonerror="false">
+            <fileset dir="${basedir}/var/build">
+                <include name="*.log"/>
+                <include name="*.txt"/>
+            </fileset>
+            <fileset dir="${basedir}/var/build/behat/failures">
+                <include name="*.png"/>
+            </fileset>
+        </delete>
+    </target>
+
+    <target name="clean-dev" description="Clean up a development environment">
+        <antcall target="clean-logs"/>
+        <antcall target="clean-cache"/>
+        <antcall target="clean-build-files"/>
+    </target>
+
+    <target name="clean" description="Cleanup build artifacts">
+        <delete dir="${build.dir}/phpunit"/>
+        <delete dir="${build.dir}/coverage"/>
+        <antcall target="clean-logs"/>
+        <antcall target="clean-cache"/>
+        <antcall target="clean-build-files"/>
+    </target>
+
+    <!-- We use a locally installed composer: ensure it is installed on the OS running this file -->
+    <target name="reset-memcached" description="Reset memcached">
+        <exec executable="echo" failonerror="false">
+            <arg value="echo flush_all > /dev/tcp/127.0.0.1/11211"/>
+        </exec>
+    </target>
+
+    <!-- We use a locally installed composer: ensure it is installed on the OS running this file -->
+    <target name="composer" description="Install composer dependencies">
+        <exec executable="composer" failonerror="true">
+            <arg value="install"/>
+            <arg value="--optimize-autoloader"/>
+            <arg value="--prefer-dist"/>
+            <arg value="--no-progress"/>
+
+            <env key="SYMFONY_ENV" value="test"/>
+        </exec>
+    </target>
+
+    <target name="prepare" depends="reset-memcached,composer,clean" description="Prepare for build">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.dir}/phpunit"/>
+        <mkdir dir="${build.dir}/paratest"/>
+        <mkdir dir="${build.dir}/coverage"/>
+    </target>
+
+    <target name="dependencies-test-dev">
+        <copy file="app/config/parameters.yml" tofile="app/config/parameters.yml.backup" failonerror="false"/>
+        <copy file="var/data/parameters/test/dev.yml" tofile="app/config/parameters.yml" overwrite="true"/>
+    </target>
+
+    <target name="dependencies-test-master">
+        <copy file="app/config/parameters.yml" tofile="app/config/parameters.yml.backup" failonerror="false"/>
+        <copy file="var/data/parameters/test/master.yml" tofile="app/config/parameters.yml" overwrite="true"/>
+    </target>
+
+    <target name="unittest" depends="prepare,phpunit"/>
+    <target name="unittest-parallel" depends="prepare,paratest"/>
+    <target name="unittest-with-coverage" depends="prepare,phpunit-with-coverage"/>
+    <target name="unittest-parallel-with-coverage" depends="prepare,fastest-phpunit-with-coverage"/>
+
+    <!-- PHPUNIT -->
+
+    <target name="phpunit" description="Run unit tests with PHPUnit WITHOUT coverage">
+        <exec executable="./vendor/bin/phpunit" failonerror="true">
+            <arg value="--no-coverage"/>
+            <arg value="--testsuite"/>
+            <arg value="unit"/>
+        </exec>
+        <copy file="var/build/phpunit/phpunit-junit.xml" tofile="var/build/phpunit/phpunit-junit-unit.xml"/>
+    </target>
+
+    <target name="phpunit-with-coverage" description="Run unit tests with PHPUnit WITH coverage">
+        <exec executable="php" failonerror="true">
+            <arg value="-dzend_extension=${xdebug.extension.path}"/>
+            <arg value="--version"/>
+        </exec>
+        <exec executable="php" failonerror="true">
+            <arg value="-dzend_extension=${xdebug.extension.path}"/>
+            <arg value="./vendor/bin/phpunit"/>
+            <arg value="--testsuite"/>
+            <arg value="unit"/>
+        </exec>
+        <copy file="var/build/phpunit/phpunit-clover.xml" tofile="var/build/phpunit/phpunit-clover-unit.xml"/>
+        <copy file="var/build/phpunit/phpunit-junit.xml" tofile="var/build/phpunit/phpunit-junit-unit.xml"/>
+    </target>
+
+    <target name="phpunit-integration" description="Run integration tests with PHPUnit WITHOUT coverage">
+        <exec executable="./vendor/bin/phpunit" failonerror="true">
+            <arg value="--no-coverage"/>
+            <arg value="--testsuite"/>
+            <arg value="integration"/>
+        </exec>
+        <copy file="var/build/phpunit/phpunit-junit.xml" tofile="var/build/phpunit/phpunit-junit-integration.xml"/>
+    </target>
+
+    <target name="phpunit-integration-with-coverage" description="Run integration tests with PHPUnit WITH coverage">
+        <exec executable="php" failonerror="true">
+            <arg value="-dzend_extension=${xdebug.extension.path}"/>
+            <arg value="--version"/>
+        </exec>
+        <exec executable="php" failonerror="true">
+            <arg value="-dzend_extension=${xdebug.extension.path}"/>
+            <arg value="./vendor/bin/phpunit"/>
+            <arg value="--testsuite"/>
+            <arg value="integration"/>
+        </exec>
+        <copy file="var/build/phpunit/phpunit-clover.xml" tofile="var/build/phpunit/phpunit-clover-integration.xml"/>
+        <copy file="var/build/phpunit/phpunit-junit.xml" tofile="var/build/phpunit/phpunit-junit-integration.xml"/>
+    </target>
+
+    <!-- FASTEST + PHPUNIT -->
+
+    <target name="fastest-phpunit-with-coverage" depends="" description="Run PHPUnit Unit Tests with Coverage parallel with fastest">
+        <exec executable="bash" failonerror="true">
+            <arg value="-c"/>
+            <arg value="./vendor/bin/fastest -x phpunit.xml.dist &quot;php -dzend_extension=${xdebug.extension.path} ./vendor/bin/phpunit --testsuite unit {};&quot;"/>
+        </exec>
+    </target>
+
+    <!-- PARATEST + PHPUNIT -->
+
+    <target name="paratest" description="Run unit tests with ParaTest+PHPUnit WITHOUT coverage">
+        <exec executable="./vendor/bin/paratest" failonerror="true">
+            <arg value="-p${paratest.num_processes}"/>
+            <arg value="--configuration"/>
+            <arg value="paratest.xml.dist"/>
+            <arg value="--testsuite"/>
+            <arg value="unit"/>
+            <arg value="--runner"/>
+            <arg value="WrapperRunner"/>
+            <arg value="--log-junit"/>
+            <arg value="${build.dir}/paratest/paratest-junit.xml"/>
+        </exec>
+        <copy file="${build.dir}/paratest/paratest-junit.xml" tofile="${build.dir}/paratest/paratest-junit-unit.xml"/>
+    </target>
+</project>

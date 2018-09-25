@@ -1,0 +1,35 @@
+{
+  "name": "validaide/html-builder",
+  "description": "PHP Library providing a fluent interface to generate small snippets of HTML",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Mark Bijl",
+      "email": "mark.bijl@validaide.com"
+    }
+  ],
+  "config": {
+    "sort-packages": true,
+    "platform": {
+      "php": "7.0.30"
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "": "lib/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "require": {
+    "php": "^7.0"
+  },
+  "require-dev": {
+    "brianium/paratest": "^1.1",
+    "phpunit/phpunit": "^6.5"
+  }
+}
