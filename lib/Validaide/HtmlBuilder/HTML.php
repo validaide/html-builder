@@ -57,7 +57,8 @@ class HTML
             }
 
             $tidy = new Tidy();
-            $tidy->parseString($this->renderTag(), ['indent' => true, 'show-body-only' => true, 'indent-spaces' => 4, 'quote-ampersand' => true]);
+            $tidy->parseString($this->renderTag(), ['indent' => true, 'show-body-only' => true, 'indent-spaces' => 4], 'utf8');
+            $tidy->cleanRepair();
 
             return (string)$tidy;
         }
