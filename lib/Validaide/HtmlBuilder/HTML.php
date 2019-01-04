@@ -56,11 +56,8 @@ class HTML
                 throw new \LogicException('The Tidy extension is not loaded: you cannot pretty-print without it');
             }
 
-            print $this->renderTag();
-
             $tidy = new Tidy();
-            $tidy->parseString($this->renderTag(), ['indent' => true, 'show-body-only' => true, 'indent-spaces' => 4], 'utf8');
-            $tidy->cleanRepair();
+            $tidy->parseString($this->renderTag(), ['indent' => true, 'show-body-only' => true, 'indent-spaces' => 4], 'ascii');
 
             return (string)$tidy;
         }
