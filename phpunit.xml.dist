@@ -22,7 +22,7 @@
     <logging>
         <log type="coverage-html" target="var/build/phpunit/phpunit-report" lowUpperBound="35" highLowerBound="70"/>
         <log type="coverage-clover" target="var/build/phpunit/phpunit-clover.xml"/>
-        <log type="junit" target="var/build/phpunit/phpunit-junit.xml" logIncompleteSkipped="false"/>
+        <log type="junit" target="var/build/phpunit/phpunit-junit.xml"/>
     </logging>
 
     <filter>

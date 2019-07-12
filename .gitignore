@@ -6,6 +6,7 @@ vendor/
 
 # PHPUnit
 phpunit.xml
+/.phpunit.result.cache
 
 # Paratest
 paratest.xml
