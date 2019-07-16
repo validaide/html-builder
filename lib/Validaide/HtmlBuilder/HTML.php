@@ -99,12 +99,13 @@ class HTML
      * Add text inside the tag
      *
      * @param string $text
+     * @param bool   $raw
      *
      * @return HTML
      */
-    public function text(string $text): HTML
+    public function text(string $text, bool $raw = false): HTML
     {
-        $text = new Text($text, $this);
+        $text = new Text($text, $this, $raw);
 
         $this->content[] = $text;
 
@@ -252,9 +253,13 @@ class HTML
             if ($tag instanceof HTML) {
                 $result .= $tag->html();
             } else if ($tag instanceof Text) {
-                // Make sure the content is 'safe'
-                // @see http://php.net/manual/en/function.htmlspecialchars.php
-                $result .= htmlspecialchars($tag->render());
+                if ($tag->isRaw()) {
+                    $result .= $tag->render();
+                } else {
+                    // Make sure the content is 'safe'
+                    // @see http://php.net/manual/en/function.htmlspecialchars.php
+                    $result .= htmlspecialchars($tag->render());
+                }
             }
         }
 
