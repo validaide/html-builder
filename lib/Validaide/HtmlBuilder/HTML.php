@@ -223,6 +223,18 @@ class HTML
     }
 
     /**
+     * Set the href attribute
+     *
+     * @param string $value
+     *
+     * @return HTML
+     */
+    public function href(string $value): self
+    {
+        return $this->attr('href', $value);
+    }
+
+    /**
      * Set the title attribute
      *
      * @param string $value
@@ -247,14 +259,18 @@ class HTML
     }
 
     /**
-     * Set the style attribute
+     * Set the dataToggle attributes
      *
-     * @param string $value
-     *
+     * @param string      $value
+     * @param string|null $dataPlacement
      * @return HTML
      */
-    public function dataToggle(string $value): self
+    public function dataToggle(string $value, ?string $dataPlacement): self
     {
+        if ($dataPlacement){
+            $this->attr('data-placement', $value);
+        }
+
         return $this->attr('data-toggle', $value);
     }
 
