@@ -268,7 +268,7 @@ class HTML
     public function dataToggle(string $value, ?string $dataPlacement): self
     {
         if ($dataPlacement){
-            $this->attr('data-placement', $value);
+            $this->attr('data-placement', $dataPlacement);
         }
 
         return $this->attr('data-toggle', $value);
