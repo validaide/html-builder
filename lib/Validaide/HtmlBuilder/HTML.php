@@ -2,6 +2,7 @@
 
 namespace Validaide\HtmlBuilder;
 
+use InvalidArgumentException;
 use LogicException;
 use tidy;
 
@@ -175,9 +176,7 @@ class HTML
      */
     public function class($value): self
     {
-        if (is_array($value)) {
-            return $this->attr('class', implode(' ', $value));
-        }
+        $value = $this->generateClassString($value);
 
         return $this->attr('class', $value);
     }
@@ -191,13 +190,7 @@ class HTML
      */
     public function classPrepend($value): self
     {
-        $class = $this->getClass();
-
-        if (is_array($value)) {
-            $value = $this->attr('class', implode(' ', $value));
-        }
-
-        $classNew = sprintf("%s %s", $value, $class);
+        $classNew = sprintf("%s %s", $this->generateClassString($value), $this->getClass());
 
         return $this->attr('class', $classNew);
     }
@@ -211,13 +204,7 @@ class HTML
      */
     public function classAppend($value): self
     {
-        $class = $this->getClass();
-
-        if (is_array($value)) {
-            $value = $this->attr('class', implode(' ', $value));
-        }
-
-        $classNew = sprintf("%s %s", $class, $value);
+        $classNew = sprintf("%s %s", $this->getClass(), $this->generateClassString($value));
 
         return $this->attr('class', $classNew);
     }
@@ -267,7 +254,7 @@ class HTML
      */
     public function dataToggle(string $value, string $dataPlacement = null): self
     {
-        if ($dataPlacement){
+        if ($dataPlacement) {
             $this->attr('data-placement', $dataPlacement);
         }
 
@@ -379,5 +366,31 @@ class HTML
     public function getClass(): ?string
     {
         return array_key_exists('class', $this->attributes) ? $this->attributes['class'] : null;
+    }
+
+    /*****************************************************************************/
+    /* HELPERS
+    /*****************************************************************************/
+
+    /**
+     * @param $value
+     * @return string|array
+     */
+    public function generateClassString($value): string
+    {
+        switch (true) {
+            case is_array($value):
+                {
+                    return implode(' ', $value);
+                }
+            case is_string($value):
+                {
+                    return $value;
+                }
+            default:
+                {
+                    throw new InvalidArgumentException('Class method accepts only string or array as an argument');
+                }
+        }
     }
 }
