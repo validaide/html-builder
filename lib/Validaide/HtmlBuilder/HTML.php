@@ -2,6 +2,8 @@
 
 namespace Validaide\HtmlBuilder;
 
+use InvalidArgumentException;
+use LogicException;
 use tidy;
 
 /**
@@ -32,37 +34,6 @@ class HTML
         $this->parent = $parent;
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return $this->renderTag();
-    }
-
-    /**
-     * @param bool $pretty
-     *
-     * @return string
-     *
-     * @throws \LogicException
-     */
-    public function html(bool $pretty = false): string
-    {
-        if ($pretty) {
-            if (!extension_loaded('tidy')) {
-                throw new \LogicException('The Tidy extension is not loaded: you cannot pretty-print without it');
-            }
-
-            $tidy = new Tidy();
-            $tidy->parseString($this->renderTag(), ['indent' => true, 'show-body-only' => true, 'indent-spaces' => 4, 'quote-ampersand' => false], 'utf8');
-
-            return (string)$tidy;
-        }
-
-        return $this->renderTag();
     }
 
     /**
@@ -142,19 +113,6 @@ class HTML
     }
 
     /**
-     * Synonym for 'attr'
-     *
-     * @param string $key
-     * @param string $value
-     *
-     * @return HTML
-     */
-    public function attribute(string $key, string $value): self
-    {
-        return $this->attr($key, $value);
-    }
-
-    /**
      * Remove an attribute
      *
      * @param string $key
@@ -180,7 +138,22 @@ class HTML
         return $this->rattr($key);
     }
 
-    // Attribute shorthands
+    /*****************************************************************************/
+    /* ATTRIBUTES
+    /*****************************************************************************/
+
+    /**
+     * Synonym for 'attr'
+     *
+     * @param string $key
+     * @param string $value
+     *
+     * @return HTML
+     */
+    public function attribute(string $key, string $value): self
+    {
+        return $this->attr($key, $value);
+    }
 
     /**
      * Set the id attribute
@@ -197,22 +170,100 @@ class HTML
     /**
      * Set the class attribute
      *
-     * @param string $value
+     * @param string|array $value
      *
      * @return HTML
      */
-    public function class(string $value): self
+    public function class($value): self
     {
+        $value = $this->generateClassString($value);
+
         return $this->attr('class', $value);
     }
 
     /**
-     * @return HTML|null
+     * Set the class attribute
+     *
+     * @param string|array $value
+     *
+     * @return HTML
      */
-    private function getParent()
+    public function classPrepend($value): self
     {
-        return $this->parent;
+        $classNew = sprintf("%s %s", $this->generateClassString($value), $this->getClass());
+
+        return $this->attr('class', $classNew);
     }
+
+    /**
+     * Set the class attribute
+     *
+     * @param string|array $value
+     *
+     * @return HTML
+     */
+    public function classAppend($value): self
+    {
+        $classNew = sprintf("%s %s", $this->getClass(), $this->generateClassString($value));
+
+        return $this->attr('class', $classNew);
+    }
+
+    /**
+     * Set the href attribute
+     *
+     * @param string $value
+     *
+     * @return HTML
+     */
+    public function href(string $value): self
+    {
+        return $this->attr('href', $value);
+    }
+
+    /**
+     * Set the title attribute
+     *
+     * @param string $value
+     *
+     * @return HTML
+     */
+    public function title(string $value): self
+    {
+        return $this->attr('title', $value);
+    }
+
+    /**
+     * Set the style attribute
+     *
+     * @param string $value
+     *
+     * @return HTML
+     */
+    public function style(string $value): self
+    {
+        return $this->attr('style', $value);
+    }
+
+    /**
+     * Set the dataToggle attributes
+     *
+     * @param string      $value
+     * @param string|null $dataPlacement
+     * @return HTML
+     */
+    public function dataToggle(string $value, string $dataPlacement = null): self
+    {
+        if ($dataPlacement) {
+            $this->attr('data-placement', $dataPlacement);
+        }
+
+        return $this->attr('data-toggle', $value);
+    }
+
+    /*****************************************************************************/
+    /* RENDER
+    /*****************************************************************************/
 
     /**
      * @return string
@@ -264,5 +315,82 @@ class HTML
         }
 
         return $result;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->renderTag();
+    }
+
+    /**
+     * @param bool $pretty
+     *
+     * @return string
+     *
+     * @throws LogicException
+     */
+    public function html(bool $pretty = false): string
+    {
+        if ($pretty) {
+            if (!extension_loaded('tidy')) {
+                throw new LogicException('The Tidy extension is not loaded: you cannot pretty-print without it');
+            }
+
+            $tidy = new Tidy();
+            $tidy->parseString($this->renderTag(), ['indent' => true, 'show-body-only' => true, 'indent-spaces' => 4, 'quote-ampersand' => false], 'utf8');
+
+            return (string)$tidy;
+        }
+
+        return $this->renderTag();
+    }
+
+    /*****************************************************************************/
+    /* GETTERS
+    /*****************************************************************************/
+
+    /**
+     * @return HTML|null
+     */
+    private function getParent()
+    {
+        return $this->parent;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getClass(): ?string
+    {
+        return array_key_exists('class', $this->attributes) ? $this->attributes['class'] : null;
+    }
+
+    /*****************************************************************************/
+    /* HELPERS
+    /*****************************************************************************/
+
+    /**
+     * @param $value
+     * @return string|array
+     */
+    public function generateClassString($value): string
+    {
+        switch (true) {
+            case is_array($value):
+                {
+                    return implode(' ', $value);
+                }
+            case is_string($value):
+                {
+                    return $value;
+                }
+            default:
+                {
+                    throw new InvalidArgumentException('Class method accepts only string or array as an argument');
+                }
+        }
     }
 }
