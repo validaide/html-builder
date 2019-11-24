@@ -95,13 +95,8 @@ class HTML
     {
         $list = '';
 
-        if (self::$instance->name !== self::LIST) {
-            throw new InvalidArgumentException(sprintf("This HTML is not a list, but a %s", self::$instance->name));
-        }
-
         foreach ($array as $element) {
             $list .= self::create('li')->text($element)->html();
-
         }
 
         $this->text($list, true);
