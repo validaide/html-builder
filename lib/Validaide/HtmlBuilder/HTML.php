@@ -11,6 +11,10 @@ use tidy;
  */
 class HTML
 {
+    public const DIV  = 'div';
+    public const SPAN = 'span';
+    public const LIST = 'ul';
+
     /** @var HTML */
     protected static $instance = null;
     /** @var string */
@@ -79,6 +83,23 @@ class HTML
         $text = new Text($text, $this, $raw);
 
         $this->content[] = $text;
+
+        return $this;
+    }
+
+    /**
+     * @param array $array
+     * @return HTML
+     */
+    public function list(array $array): HTML
+    {
+        $list = '';
+
+        foreach ($array as $element) {
+            $list .= self::create('li')->text($element)->html();
+        }
+
+        $this->text($list, true);
 
         return $this;
     }
