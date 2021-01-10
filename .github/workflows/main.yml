@@ -10,13 +10,10 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@1.7.2
         with:
-          php-version: '7.2'
-
-      - name: Update composer to version 1.9.3
-        run: sudo composer self-update 1.9.3 --snapshot
-
-      - name: Setup Access (composer)
-        run: composer config -g github-oauth.github.com ${{ secrets.PAT_GITHUB_ACTIONS }}
+          php-version: '7.4'
+          tools: composer:v1,phpstan
+        env:
+          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install PHP Dependencies
         run: composer install --optimize-autoloader --prefer-dist
@@ -25,3 +22,6 @@ jobs:
 
       - name: Unit Tests
         run: vendor/bin/phpunit
+
+      - name: Static Analysis (phpstan)
+        run: phpstan analyse --memory-limit=-1 --no-progress
