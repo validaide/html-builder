@@ -27,8 +27,6 @@ class HTML
     private $parent;
 
     /**
-     * TagElement constructor.
-     *
      * @param string    $name
      * @param HTML|null $parent
      */
@@ -49,7 +47,7 @@ class HTML
      */
     public static function create(string $name)
     {
-        self::$instance = new static($name);
+        self::$instance = new self($name);
 
         return self::$instance;
     }
