@@ -27,8 +27,6 @@ class HTML
     private $parent;
 
     /**
-     * TagElement constructor.
-     *
      * @param string    $name
      * @param HTML|null $parent
      */
@@ -49,7 +47,7 @@ class HTML
      */
     public static function create(string $name)
     {
-        self::$instance = new static($name);
+        self::$instance = new self($name);
 
         return self::$instance;
     }
@@ -89,6 +87,7 @@ class HTML
 
     /**
      * @param array $array
+     *
      * @return HTML
      */
     public function list(array $array): HTML
@@ -255,6 +254,16 @@ class HTML
     }
 
     /**
+     * @param string $value
+     *
+     * @return $this
+     */
+    public function titleAppend(string $value): self
+    {
+        return $this->attr('title', $this->getTitle() . $value);
+    }
+
+    /**
      * Set the style attribute
      *
      * @param string $value
@@ -271,6 +280,7 @@ class HTML
      *
      * @param string      $value
      * @param string|null $dataPlacement
+     *
      * @return HTML
      */
     public function dataToggle(string $value, string $dataPlacement = null): self
@@ -324,7 +334,7 @@ class HTML
         foreach ($this->content as $tag) {
             if ($tag instanceof HTML) {
                 $result .= $tag->html();
-            } else if ($tag instanceof Text) {
+            } elseif ($tag instanceof Text) {
                 if ($tag->isRaw()) {
                     $result .= $tag->render();
                 } else {
@@ -389,29 +399,40 @@ class HTML
         return array_key_exists('class', $this->attributes) ? $this->attributes['class'] : null;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getText(): ?string
+    {
+        return array_key_exists('text', $this->attributes) ? $this->attributes['text'] : null;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTitle(): ?string
+    {
+        return array_key_exists('title', $this->attributes) ? $this->attributes['title'] : null;
+    }
+
     /*****************************************************************************/
     /* HELPERS
     /*****************************************************************************/
 
     /**
      * @param $value
+     *
      * @return string|array
      */
     public function generateClassString($value): string
     {
         switch (true) {
             case is_array($value):
-                {
-                    return implode(' ', $value);
-                }
+                return implode(' ', $value);
             case is_string($value):
-                {
-                    return $value;
-                }
+                return $value;
             default:
-                {
-                    throw new InvalidArgumentException('Class method accepts only string or array as an argument');
-                }
+                throw new InvalidArgumentException('Class method accepts only string or array as an argument');
         }
     }
 }
