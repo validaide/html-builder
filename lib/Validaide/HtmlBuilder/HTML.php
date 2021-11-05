@@ -267,6 +267,11 @@ class HTML
         return $this->renderTag();
     }
 
+    public function isEmpty(): bool
+    {
+        return count($this->content) === 0;
+    }
+
     /**
      * @throws LogicException
      */
