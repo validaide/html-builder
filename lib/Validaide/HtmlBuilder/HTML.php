@@ -15,50 +15,41 @@ class HTML
     public const SPAN = 'span';
     public const LIST = 'ul';
 
-    /** @var HTML */
-    protected static $instance = null;
-    /** @var string */
-    private $name = '';
-    /** @var array */
-    private $attributes = [];
+    protected static ?HTML $instance = null;
+
+    private string $name = '';
+
+    private array $attributes = [];
+
     /** @var HTML[] */
-    private $content = [];
-    /** @var null|HTML */
-    private $parent;
+    private array $content = [];
+
+    private ?HTML $parent;
+
+    /** @var null|HTML[] */
+    private array $appendHTML = [];
+
+    /** @var null|HTML[] */
+    private ?array $prependHTML = null;
 
     /**
-     * @param string    $name
      * @param HTML|null $parent
      */
     protected function __construct(string $name, HTML $parent = null)
     {
-        $this->name   = $name;
-        $this->parent = $parent;
+        $this->name       = $name;
+        $this->parent     = $parent;
 
         return $this;
     }
 
-    /**
-     * Create a Html tag
-     *
-     * @param string $name
-     *
-     * @return HTML
-     */
-    public static function create(string $name)
+    public static function create(string $name, HTML $parent = null): HTML
     {
-        self::$instance = new self($name);
+        self::$instance = new self($name, $parent);
 
         return self::$instance;
     }
 
-    /**
-     * Open a HTML tag
-     *
-     * @param string $name
-     *
-     * @return HTML
-     */
     public function tag(string $name): HTML
     {
         $tag = new HTML($name, $this);
@@ -68,14 +59,20 @@ class HTML
         return $this->content[count($this->content) - 1];
     }
 
-    /**
-     * Add text inside the tag
-     *
-     * @param string $text
-     * @param bool   $raw
-     *
-     * @return HTML
-     */
+    public function append(HTML $html): HTML
+    {
+        $this->appendHTML[] = $html;
+
+        return $this;
+    }
+
+    public function prepend(HTML $html): HTML
+    {
+        $this->prependHTML[] = $html;
+
+        return $this;
+    }
+
     public function text(string $text, bool $raw = false): HTML
     {
         $text = new Text($text, $this, $raw);
@@ -85,11 +82,6 @@ class HTML
         return $this;
     }
 
-    /**
-     * @param array $array
-     *
-     * @return HTML
-     */
     public function list(array $array): HTML
     {
         $list = '';
@@ -103,28 +95,15 @@ class HTML
         return $this;
     }
 
-    /**
-     * Close a HTML tag
-     *
-     * @return HTML
-     */
     public function end(): HTML
     {
-        if ($this->parent) {
+        if ($this->parent !== null) {
             return $this->getParent();
         }
 
         return $this;
     }
 
-    /**
-     * Set an attribute
-     *
-     * @param string $key
-     * @param string $value
-     *
-     * @return HTML
-     */
     public function attr(string $key, string $value): self
     {
         $this->attributes[$key] = $value;
@@ -132,13 +111,6 @@ class HTML
         return $this;
     }
 
-    /**
-     * Remove an attribute
-     *
-     * @param string $key
-     *
-     * @return HTML
-     */
     public function rattr(string $key): self
     {
         unset($this->attributes[$key]);
@@ -146,13 +118,6 @@ class HTML
         return $this;
     }
 
-    /**
-     * Synonym for 'rattr'
-     *
-     * @param string $key
-     *
-     * @return HTML
-     */
     public function removeAttribute(string $key): self
     {
         return $this->rattr($key);
@@ -162,38 +127,16 @@ class HTML
     /* ATTRIBUTES
     /*****************************************************************************/
 
-    /**
-     * Synonym for 'attr'
-     *
-     * @param string $key
-     * @param string $value
-     *
-     * @return HTML
-     */
     public function attribute(string $key, string $value): self
     {
         return $this->attr($key, $value);
     }
 
-    /**
-     * Set the id attribute
-     *
-     * @param string $value
-     *
-     * @return HTML
-     */
     public function id(string $value): self
     {
         return $this->attr('id', $value);
     }
 
-    /**
-     * Set the class attribute
-     *
-     * @param string|array $value
-     *
-     * @return HTML
-     */
     public function class($value): self
     {
         $value = $this->generateClassString($value);
@@ -201,13 +144,6 @@ class HTML
         return $this->attr('class', $value);
     }
 
-    /**
-     * Set the class attribute
-     *
-     * @param string|array $value
-     *
-     * @return HTML
-     */
     public function classPrepend($value): self
     {
         $classNew = sprintf("%s %s", $this->generateClassString($value), $this->getClass());
@@ -215,13 +151,6 @@ class HTML
         return $this->attr('class', $classNew);
     }
 
-    /**
-     * Set the class attribute
-     *
-     * @param string|array $value
-     *
-     * @return HTML
-     */
     public function classAppend($value): self
     {
         $classNew = sprintf("%s %s", $this->getClass(), $this->generateClassString($value));
@@ -229,61 +158,27 @@ class HTML
         return $this->attr('class', $classNew);
     }
 
-    /**
-     * Set the href attribute
-     *
-     * @param string $value
-     *
-     * @return HTML
-     */
     public function href(string $value): self
     {
         return $this->attr('href', $value);
     }
 
-    /**
-     * Set the title attribute
-     *
-     * @param string $value
-     *
-     * @return HTML
-     */
     public function title(string $value): self
     {
         return $this->attr('title', $value);
     }
 
-    /**
-     * @param string $value
-     *
-     * @return $this
-     */
     public function titleAppend(string $value): self
     {
         return $this->attr('title', $this->getTitle() . $value);
     }
 
-    /**
-     * Set the style attribute
-     *
-     * @param string $value
-     *
-     * @return HTML
-     */
     public function style(string $value): self
     {
         return $this->attr('style', $value);
     }
 
-    /**
-     * Set the dataToggle attributes
-     *
-     * @param string      $value
-     * @param string|null $dataPlacement
-     *
-     * @return HTML
-     */
-    public function dataToggle(string $value, string $dataPlacement = null): self
+    public function dataToggle(string $value, ?string $dataPlacement = null): self
     {
         if ($dataPlacement) {
             $this->attr('data-placement', $dataPlacement);
@@ -292,42 +187,61 @@ class HTML
         return $this->attr('data-toggle', $value);
     }
 
-    /*****************************************************************************/
-    /* RENDER
-    /*****************************************************************************/
-
-    /**
-     * @return string
-     */
     private function renderTag(): string
     {
-        return sprintf(
+        $renderedString = sprintf(
             "<%s%s>%s</%s>",
             $this->name,
-            count($this->attributes) === 0 ? '' : ' ' . $this->renderAttributes(),
+            $this->attributes === [] ? '' : ' ' . $this->renderAttributes(),
             $this->renderTags(),
             $this->name
         );
+
+        if (count((array) $this->appendHTML) > 0) {
+            $renderedString .= $this->renderAppendedString();
+        }
+
+        if (count((array) $this->prependHTML) > 0) {
+            $renderedString = sprintf("%s%s", $this->renderPrependedString(), $renderedString);
+        }
+
+        return $renderedString;
     }
 
-    /**
-     * @return string
-     */
+    private function renderAppendedString(): string
+    {
+        $appendString = '';
+
+        foreach ($this->appendHTML as $appendHTML) {
+            $appendString .= $appendHTML;
+        }
+
+        return $appendString;
+    }
+
+    private function renderPrependedString(): string
+    {
+        $prependString = '';
+
+        foreach ($this->prependHTML as $prependHTML) {
+            $prependString .= $prependHTML;
+        }
+
+        return $prependString;
+    }
+
     private function renderAttributes(): string
     {
         ksort($this->attributes);
 
         $argumentArray = [];
         foreach ($this->attributes as $argument => $value) {
-            $argumentArray[] = sprintf("%s=\"%s\"", $argument, $value);
+            $argumentArray[] = sprintf('%s="%s"', $argument, $value);
         }
 
         return implode(" ", $argumentArray);
     }
 
-    /**
-     * @return string
-     */
     private function renderTags(): string
     {
         $result = '';
@@ -348,25 +262,18 @@ class HTML
         return $result;
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->renderTag();
     }
 
     /**
-     * @param bool $pretty
-     *
-     * @return string
-     *
      * @throws LogicException
      */
     public function html(bool $pretty = false): string
     {
         if ($pretty) {
-            if (!extension_loaded('tidy')) {
+            if (!extension_loaded(\tidy::class)) {
                 throw new LogicException('The Tidy extension is not loaded: you cannot pretty-print without it');
             }
 
@@ -383,36 +290,24 @@ class HTML
     /* GETTERS
     /*****************************************************************************/
 
-    /**
-     * @return HTML|null
-     */
-    private function getParent()
+    private function getParent(): ?HTML
     {
         return $this->parent;
     }
 
-    /**
-     * @return string|null
-     */
     public function getClass(): ?string
     {
-        return array_key_exists('class', $this->attributes) ? $this->attributes['class'] : null;
+        return $this->attributes['class'] ?? null;
     }
 
-    /**
-     * @return string|null
-     */
     public function getText(): ?string
     {
-        return array_key_exists('text', $this->attributes) ? $this->attributes['text'] : null;
+        return $this->attributes['text'] ?? null;
     }
 
-    /**
-     * @return string|null
-     */
     public function getTitle(): ?string
     {
-        return array_key_exists('title', $this->attributes) ? $this->attributes['title'] : null;
+        return $this->attributes['title'] ?? null;
     }
 
     /*****************************************************************************/
@@ -420,8 +315,6 @@ class HTML
     /*****************************************************************************/
 
     /**
-     * @param $value
-     *
      * @return string|array
      */
     public function generateClassString($value): string
