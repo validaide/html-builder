@@ -21,7 +21,7 @@ class HTML
 
     private array $attributes = [];
 
-    /** @var HTML[] */
+    /** @var HTML[]|Text */
     private array $content = [];
 
     private ?HTML $parent;
@@ -32,15 +32,10 @@ class HTML
     /** @var null|HTML[] */
     private ?array $prependHTML = null;
 
-    /**
-     * @param HTML|null $parent
-     */
-    protected function __construct(string $name, HTML $parent = null)
+    protected function __construct(string $name, ?HTML $parent = null)
     {
         $this->name       = $name;
         $this->parent     = $parent;
-
-        return $this;
     }
 
     public static function create(string $name, HTML $parent = null): HTML
@@ -278,7 +273,7 @@ class HTML
     public function html(bool $pretty = false): string
     {
         if ($pretty) {
-            if (!extension_loaded(\tidy::class)) {
+            if (!extension_loaded(tidy::class)) {
                 throw new LogicException('The Tidy extension is not loaded: you cannot pretty-print without it');
             }
 
@@ -319,9 +314,6 @@ class HTML
     /* HELPERS
     /*****************************************************************************/
 
-    /**
-     * @return string|array
-     */
     public function generateClassString($value): string
     {
         switch (true) {
