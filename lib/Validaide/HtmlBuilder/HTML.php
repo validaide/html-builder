@@ -27,10 +27,10 @@ class HTML
     private ?HTML $parent;
 
     /** @var null|HTML[] */
-    private array $appendHTML = [];
+    private ?array $appendHTML = [];
 
     /** @var null|HTML[] */
-    private ?array $prependHTML = null;
+    private ?array $prependHTML = [];
 
     protected function __construct(string $name, ?HTML $parent = null)
     {
@@ -264,7 +264,7 @@ class HTML
 
     public function isEmpty(): bool
     {
-        return count($this->content) === 0;
+        return count($this->content) === 0 && count($this->appendHTML) === 0 && count($this->prependHTML) === 0;
     }
 
     /**
