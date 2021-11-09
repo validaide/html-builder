@@ -264,7 +264,7 @@ class HTML
 
     public function isEmpty(): bool
     {
-        return count($this->content) === 0 && count($this->appendHTML) === 0 && count($this->prependHTML) === 0;
+        return $this === HTML::create('span');
     }
 
     /**
