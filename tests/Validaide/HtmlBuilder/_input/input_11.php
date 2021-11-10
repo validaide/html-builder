@@ -2,7 +2,6 @@
 
 use Validaide\HtmlBuilder\HTML;
 
-//
 return function () {
     return HTML::create('table')->attr('class', 'table table-default')
         ->tag('thead')
