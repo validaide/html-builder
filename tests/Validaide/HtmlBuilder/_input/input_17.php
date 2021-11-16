@@ -2,7 +2,6 @@
 
 use Validaide\HtmlBuilder\HTML;
 
-//
 return function () {
     return HTML::create(HTML::SPAN)
         ->text('Hi there')
