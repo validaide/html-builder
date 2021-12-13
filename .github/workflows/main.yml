@@ -17,6 +17,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           tools: composer:v2,phpstan
+          extensions: tidy
         env:
           COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

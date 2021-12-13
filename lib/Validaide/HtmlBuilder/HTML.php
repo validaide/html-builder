@@ -340,7 +340,7 @@ class HTML
                 } else {
                     // Make sure the content is 'safe'
                     // @see http://php.net/manual/en/function.htmlspecialchars.php
-                    $result[] = htmlspecialchars($tag->render(), ENT_SUBSTITUTE);
+                    $result[] = htmlspecialchars($tag->render(), ENT_QUOTES | ENT_SUBSTITUTE);
                 }
             }
         }
