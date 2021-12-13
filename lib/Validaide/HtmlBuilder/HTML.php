@@ -92,13 +92,13 @@ class HTML
      */
     public function list(array $array): HTML
     {
-        $list = '';
+        $list = [];
 
         foreach ($array as $element) {
-            $list .= self::create('li')->text($element)->html();
+            $list[] = self::create('li')->text($element)->html();
         }
 
-        $this->text($list, true);
+        $this->text(implode('', $list), true);
 
         return $this;
     }
@@ -330,22 +330,22 @@ class HTML
      */
     private function renderTags(): string
     {
-        $result = '';
+        $result = [];
         foreach ($this->content as $tag) {
             if ($tag instanceof HTML) {
-                $result .= $tag->html();
+                $result[] = $tag->html();
             } elseif ($tag instanceof Text) {
                 if ($tag->isRaw()) {
-                    $result .= $tag->render();
+                    $result[] = $tag->render();
                 } else {
                     // Make sure the content is 'safe'
                     // @see http://php.net/manual/en/function.htmlspecialchars.php
-                    $result .= htmlspecialchars($tag->render());
+                    $result[] = htmlspecialchars($tag->render(), ENT_SUBSTITUTE);
                 }
             }
         }
 
-        return $result;
+        return implode('', $result);
     }
 
     /**
