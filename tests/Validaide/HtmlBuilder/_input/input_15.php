@@ -2,7 +2,6 @@
 
 use Validaide\HtmlBuilder\HTML;
 
-//
 return function () {
     return HTML::create('div')
         ->class(['class2','class3', 'class4'])

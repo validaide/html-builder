@@ -2,7 +2,6 @@
 
 use Validaide\HtmlBuilder\HTML;
 
-//
 return function () {
     return HTML::create('div')->attr('id', 'div-1')
         ->tag('div')->attr('id', 'div-2a')
