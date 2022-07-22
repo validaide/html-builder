@@ -176,10 +176,10 @@ class HTML
     public function dataToggle(string $value, ?string $dataPlacement = null): self
     {
         if ($dataPlacement) {
-            $this->attr('data-placement', $dataPlacement);
+            $this->attr('data-bs-placement', $dataPlacement);
         }
 
-        return $this->attr('data-toggle', $value);
+        return $this->attr('data-bs-toggle', $value);
     }
 
     private function renderTag(): string
