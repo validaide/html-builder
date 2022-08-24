@@ -348,14 +348,16 @@ class HTML
     private function getHTMLPurifier(): HTMLPurifier
     {
         $config = HTMLPurifier_Config::createDefault();
-        // $config->set('Cache.DefinitionImpl', null); // remove this later!
+        $config->set('Cache.DefinitionImpl', null); // remove this later!
         $config->set('Attr.EnableID', true);
-        $config->set('HTML.Allowed', 'h1,a[href|id|data-content]');
 
         $def = $config->getHTMLDefinition(true);
+        $def->addBlankElement('data-*');
+
         $def->addAttribute('h1', 'data-content', 'Text');
-//        $def->addAttribute('*', 'data-my-id', 'Text');
-//        $def->addAttribute('*', 'data-toggle', new \HTMLPurifier_AttrDef_Text());
+        $def->addAttribute('div', 'data-my-id', 'Text');
+        $def->addAttribute('a', 'data-placement', 'Text');
+        $def->addAttribute('a', 'data-toggle', 'Text');
 
         return new HTMLPurifier($config);
     }
