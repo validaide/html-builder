@@ -25,7 +25,13 @@ class Text
 
     public function render(): string
     {
-        return $this->text;
+        if ($this->isRaw()) {
+            return $this->text;
+        }
+
+        // Make sure the content is 'safe'
+        // @see http://php.net/manual/en/function.htmlspecialchars.php
+        return htmlspecialchars($this->text);
     }
 
     public function isRaw(): bool

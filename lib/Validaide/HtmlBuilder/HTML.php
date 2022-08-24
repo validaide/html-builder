@@ -2,7 +2,10 @@
 
 namespace Validaide\HtmlBuilder;
 
+use HTMLPurifier;
+use HTMLPurifier_Config;
 use InvalidArgumentException;
+use JetBrains\PhpStorm\Deprecated;
 use LogicException;
 use tidy;
 
@@ -34,6 +37,8 @@ class HTML
 
     protected function __construct(string $name, ?HTML $parent = null)
     {
+        $name = preg_replace("/[^a-zA-Z0-9]+/", "", $name);
+
         $this->name       = $name;
         $this->parent     = $parent;
     }
@@ -54,6 +59,13 @@ class HTML
         return $this->content[count($this->content) - 1];
     }
 
+    public function tagHTML(HTML $tag): HTML
+    {
+        $this->content[] = $tag;
+
+        return $this->content[count($this->content) - 1];
+    }
+
     public function append(HTML $html): HTML
     {
         $this->appendHTML[] = $html;
@@ -68,7 +80,13 @@ class HTML
         return $this;
     }
 
-    public function text(string $text, bool $raw = false): HTML
+    /**
+     * $raw parameter is deprecated
+     * Use instead tagHTML in order to insert html into the mix
+     */
+    public function text(string $text,
+                         #[Deprecated]
+                         bool $raw = false): HTML
     {
         $text = new Text($text, $this, $raw);
 
@@ -101,7 +119,7 @@ class HTML
 
     public function attr(string $key, string $value): self
     {
-        $this->attributes[$key] = $value;
+        $this->attributes[$key] = htmlspecialchars($value);
 
         return $this;
     }
@@ -192,6 +210,13 @@ class HTML
             $this->name
         );
 
+        $purifier = $this->getHTMLPurifier();
+        $clean = $purifier->purify($renderedString);
+
+        if ($renderedString != $clean) {
+            dump($renderedString, $clean);
+            dump("----");
+        }
         if (count((array) $this->appendHTML) > 0) {
             $renderedString .= $this->renderAppendedString();
         }
@@ -244,13 +269,7 @@ class HTML
             if ($tag instanceof HTML) {
                 $result .= $tag->html();
             } elseif ($tag instanceof Text) {
-                if ($tag->isRaw()) {
-                    $result .= $tag->render();
-                } else {
-                    // Make sure the content is 'safe'
-                    // @see http://php.net/manual/en/function.htmlspecialchars.php
-                    $result .= htmlspecialchars($tag->render());
-                }
+                $result .= $tag->render();
             }
         }
 
@@ -324,5 +343,20 @@ class HTML
             default:
                 throw new InvalidArgumentException('Class method accepts only string or array as an argument');
         }
+    }
+
+    private function getHTMLPurifier(): HTMLPurifier
+    {
+        $config = HTMLPurifier_Config::createDefault();
+        // $config->set('Cache.DefinitionImpl', null); // remove this later!
+        $config->set('Attr.EnableID', true);
+        $config->set('HTML.Allowed', 'h1,a[href|id|data-content]');
+
+        $def = $config->getHTMLDefinition(true);
+        $def->addAttribute('h1', 'data-content', 'Text');
+//        $def->addAttribute('*', 'data-my-id', 'Text');
+//        $def->addAttribute('*', 'data-toggle', new \HTMLPurifier_AttrDef_Text());
+
+        return new HTMLPurifier($config);
     }
 }
