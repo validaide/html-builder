@@ -6,6 +6,6 @@ use Validaide\HtmlBuilder\HTML;
 
 return function () {
     return HTML::create('img')
-        ->attr('onmouseover', "alert('xxs')")
+        ->attr('onmouseover', "alert('XSS')")
         ->attr('src', '#');
 };

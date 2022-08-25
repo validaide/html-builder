@@ -27,21 +27,6 @@ class HTML_XSS_Test extends TestCase
         $this->assertEqualsToHtmlFile($html, $outputFilePath);
     }
 
-    public function testSomething()
-    {
-        $a = HTML::create('svg onload=alert("XSS_ATTAAACK_ATTEMPT")');
-        //$a = HTML::create('div')
-
-    //            ->text('Hi there <svg onload=alert("XSS_ATTACK_ATTEMPT")>', false)
-    //            ->title('<svg onload=alert("XSS_ATTACK_ATTEMPT")>')
-    //            ->titleAppend('With Extra content');
-
-        $fh =fopen("/tmp/example_xss.html", "w+");
-        fwrite($fh, $a->html());
-        fclose($fh);
-
-    }
-
     /*****************************************************************************/
     /* Helpers
     /*****************************************************************************/
@@ -55,8 +40,8 @@ class HTML_XSS_Test extends TestCase
 
         return array_map(
             null,
-            glob($baseDir . '/_input_xss/input_*_X.php'),
-            glob($baseDir . '/_output_xss/output_*_X.html'),
+            glob($baseDir . '/_input_xss/input_*.php'),
+            glob($baseDir . '/_output_xss/output_*.html'),
         );
     }
 

@@ -1,17 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Validaide\HtmlBuilder;
 
-use HTMLPurifier;
-use HTMLPurifier_Config;
 use InvalidArgumentException;
 use JetBrains\PhpStorm\Deprecated;
 use LogicException;
 use tidy;
 
-/**
- * @author Mark Bijl <mark.bijl@validaide.com>
- */
 class HTML
 {
     public const DIV  = 'div';
@@ -292,15 +287,12 @@ class HTML
             return (string)$tidy;
         }
 
-
         $renderedString = $this->renderTag();
 
         // CN: due to the recursive nature of this method call, we apply purifier only on the final result
         if ($this->isTopLevel()) {
-            $purifier = $this->getHTMLPurifier();
-            $clean = $purifier->purify($renderedString);
-
-            return $clean;
+            $purifier = PurifierBuilder::purifier();
+            return $purifier->purify($renderedString);
         }
 
         return $renderedString;
@@ -349,24 +341,5 @@ class HTML
             default:
                 throw new InvalidArgumentException('Class method accepts only string or array as an argument');
         }
-    }
-
-    private function getHTMLPurifier(): HTMLPurifier
-    {
-        $config = HTMLPurifier_Config::createDefault();
-        $config->set('Cache.DefinitionImpl', null); // remove this later!
-        $config->set('Attr.EnableID', true);
-//        $config->set('AutoFormat.RemoveEmpty', false);
-//        $config->set('AutoFormat.RemoveEmpty.RemoveNbsp', false);
-
-        $def = $config->getHTMLDefinition(true);
-        $def->addBlankElement('data-*');
-
-        $def->addAttribute('h1', 'data-content', 'Text');
-        $def->addAttribute('div', 'data-my-id', 'Text');
-        $def->addAttribute('a', 'data-placement', 'Text');
-        $def->addAttribute('a', 'data-toggle', 'Text');
-
-        return new HTMLPurifier($config);
     }
 }

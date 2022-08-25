@@ -1,10 +1,7 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Validaide\HtmlBuilder;
 
-/**
- * @author Mark Bijl <mark.bijl@validaide.com>
- */
 class Text
 {
     private string $text;
