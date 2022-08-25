@@ -97,13 +97,10 @@ class HTML
 
     public function list(array $array): HTML
     {
-        $list = '';
-
         foreach ($array as $element) {
-            $list .= self::create('li')->text($element)->html();
+            $liElement = self::create('li', $this)->text($element);
+            $this->tagHTML($liElement);
         }
-
-        $this->text($list, true);
 
         return $this;
     }
@@ -210,13 +207,6 @@ class HTML
             $this->name
         );
 
-        $purifier = $this->getHTMLPurifier();
-        $clean = $purifier->purify($renderedString);
-
-        if ($renderedString != $clean) {
-            dump($renderedString, $clean);
-            dump("----");
-        }
         if (count((array) $this->appendHTML) > 0) {
             $renderedString .= $this->renderAppendedString();
         }
@@ -302,7 +292,18 @@ class HTML
             return (string)$tidy;
         }
 
-        return $this->renderTag();
+
+        $renderedString = $this->renderTag();
+
+        // CN: due to the recursive nature of this method call, we apply purifier only on the final result
+        if ($this->isTopLevel()) {
+            $purifier = $this->getHTMLPurifier();
+            $clean = $purifier->purify($renderedString);
+
+            return $clean;
+        }
+
+        return $renderedString;
     }
 
     /*****************************************************************************/
@@ -329,6 +330,11 @@ class HTML
         return $this->attributes['title'] ?? null;
     }
 
+    public function isTopLevel(): bool
+    {
+        return !(bool)$this->getParent();
+    }
+
     /*****************************************************************************/
     /* HELPERS
     /*****************************************************************************/
@@ -350,6 +356,8 @@ class HTML
         $config = HTMLPurifier_Config::createDefault();
         $config->set('Cache.DefinitionImpl', null); // remove this later!
         $config->set('Attr.EnableID', true);
+//        $config->set('AutoFormat.RemoveEmpty', false);
+//        $config->set('AutoFormat.RemoveEmpty.RemoveNbsp', false);
 
         $def = $config->getHTMLDefinition(true);
         $def->addBlankElement('data-*');

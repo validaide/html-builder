@@ -41,6 +41,12 @@ class HTMLTest extends TestCase
     public function inputCommandToOutputFilesProvider(): array
     {
         $baseDir = __DIR__;
+//$number = '11';
+//        return [
+//            [$baseDir . '/_input/input_'.$number.'.php',
+//            $baseDir . '/_output/output_'.$number.'_flat.html',
+//            $baseDir . '/_output/output_'.$number.'_pretty.html']
+//        ];
 
         return array_map(
             null,
