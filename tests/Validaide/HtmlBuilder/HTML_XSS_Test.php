@@ -52,6 +52,5 @@ class HTML_XSS_Test extends TestCase
     protected function assertEqualsToHtmlFile(HTML $html, string $outputFilePathFlat)
     {
         $this->assertEquals(file_get_contents($outputFilePathFlat), $html->html());
-        // $this->assertEquals(file_get_contents($outputFilePathPretty), $html->html(true));
     }
 }

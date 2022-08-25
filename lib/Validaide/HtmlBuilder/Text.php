@@ -28,7 +28,7 @@ class Text
 
         // Make sure the content is 'safe'
         // @see http://php.net/manual/en/function.htmlspecialchars.php
-        return htmlspecialchars($this->text);
+        return htmlspecialchars($this->text, ENT_QUOTES | ENT_SUBSTITUTE);
     }
 
     public function isRaw(): bool
