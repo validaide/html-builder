@@ -2,6 +2,7 @@
 
 namespace Validaide\HtmlBuilder;
 
+use Exception;
 use HTMLPurifier;
 use HTMLPurifier_Config;
 
@@ -55,6 +56,24 @@ final class PurifierBuilder
         self::enrichDataDefinitions($config);
 
         return new HTMLPurifier($config);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function checkAttribute(string $attributeName, string $elementName)
+    {
+        if (substr($attributeName, 0, 5) !== 'data-') {
+            return;
+        }
+
+        if (!in_array($elementName, self::SUPPORTED_ELEMENTS_FOR_DATA_ATTRIBUTES)) {
+            throw new Exception(sprintf("Unsupported html element (%s) for data attributes", $elementName));
+        }
+
+        if (!in_array($attributeName, self::DATA_ATTRIBUTES)) {
+            throw new Exception(sprintf("Unsupported data attribute (%s)", $attributeName));
+        }
     }
 
     private static function enrichDataDefinitions(HTMLPurifier_Config $config): void

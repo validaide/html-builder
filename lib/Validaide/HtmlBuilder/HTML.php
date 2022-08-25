@@ -2,6 +2,7 @@
 
 namespace Validaide\HtmlBuilder;
 
+use Exception;
 use InvalidArgumentException;
 use JetBrains\PhpStorm\Deprecated;
 use LogicException;
@@ -109,8 +110,13 @@ class HTML
         return $this;
     }
 
+    /**
+     * @throws Exception
+     */
     public function attr(string $key, string $value): self
     {
+        PurifierBuilder::checkAttribute($key, $this->name);
+
         $this->attributes[$key] = htmlspecialchars($value);
 
         return $this;
