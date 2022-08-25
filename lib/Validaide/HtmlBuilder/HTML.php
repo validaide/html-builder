@@ -79,6 +79,8 @@ class HTML
     /**
      * $raw parameter is deprecated
      * Use instead tagHTML in order to insert html into the mix
+     *
+     * @param bool $raw - Deprecated due to XSS injection concerns. Use tagHTML instead.
      */
     public function text(string $text,
                          #[Deprecated]
