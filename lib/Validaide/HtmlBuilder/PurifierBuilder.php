@@ -5,6 +5,7 @@ namespace Validaide\HtmlBuilder;
 use Exception;
 use HTMLPurifier;
 use HTMLPurifier_Config;
+use HTMLPurifier_HTMLDefinition;
 
 final class PurifierBuilder
 {
@@ -53,7 +54,11 @@ final class PurifierBuilder
         $config->set('AutoFormat.RemoveEmpty', false);
         $config->set('AutoFormat.RemoveEmpty.RemoveNbsp', false);
 
-        self::enrichDataDefinitions($config);
+        $def = $config->getHTMLDefinition(true);
+        if ($def) {
+            self::enrichDataDefinitions($def);
+            self::enrichGenericDefinitions($def);
+        }
 
         return new HTMLPurifier($config);
     }
@@ -76,19 +81,21 @@ final class PurifierBuilder
         }
     }
 
-    private static function enrichDataDefinitions(HTMLPurifier_Config $config): void
+    private static function enrichDataDefinitions(HTMLPurifier_HTMLDefinition $def): void
     {
-        $def = $config->getHTMLDefinition(true);
-        if (is_null($def)) {
-            return;
-        }
-
         $def->addBlankElement('data-*');
 
         foreach(self::SUPPORTED_ELEMENTS_FOR_DATA_ATTRIBUTES as $element) {
             foreach(self::DATA_ATTRIBUTES as $dataAttribute) {
                 $def->addAttribute($element, $dataAttribute, 'Text');
             }
+        }
+    }
+
+    private static function enrichGenericDefinitions(HTMLPurifier_HTMLDefinition $def): void
+    {
+        foreach(['i', 'span', 'div'] as $element) {
+            $def->addAttribute($element, 'aria-hidden', 'Text');
         }
     }
 }
