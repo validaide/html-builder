@@ -55,8 +55,15 @@ class HTML
         return $this->content[count($this->content) - 1];
     }
 
+    /**
+     * @throws LogicException
+     */
     public function tagHTML(HTML $tag): HTML
     {
+        if (!$tag->getParent()) {
+            throw new LogicException(sprintf("The tag with name %s should have a parent", $tag->getName()));
+        }
+
         $this->content[] = $tag;
 
         return $this->content[count($this->content) - 1];
@@ -277,6 +284,11 @@ class HTML
     public function isEmpty(): bool
     {
         return count($this->attributes) === 0 && count($this->content) === 0 && count($this->appendHTML) === 0 && count($this->prependHTML) === 0;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     /**
