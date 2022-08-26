@@ -285,7 +285,7 @@ class HTML
 
     public function __toString(): string
     {
-        return $this->renderTag();
+        return $this->html();
     }
 
     public function isEmpty(): bool
