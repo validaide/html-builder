@@ -3,13 +3,9 @@
 namespace Tests\Validaide\HtmlBuilder;
 
 use Exception;
-use LogicException;
 use PHPUnit\Framework\TestCase;
 use Validaide\HtmlBuilder\HTML;
 
-/**
- * @author Mark Bijl <mark.bijl@validaide.com>
- */
 class HTMLTest extends TestCase
 {
     /*****************************************************************************/
@@ -73,16 +69,15 @@ class HTMLTest extends TestCase
 
     public function testIncludedTagsShouldHaveAParent()
     {
-        // Assert (needs to be first in this case)
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('The tag with name li should have a parent');
-
         // Arrange
         $ul = HTML::create(HTML::LIST);
         $li = HTML::create('li');
 
         // Act
         $ul->tagHTML($li);
+
+        // Assert
+        $this->assertEquals($ul, $li->getParent());
     }
     /*****************************************************************************/
     /* Helpers

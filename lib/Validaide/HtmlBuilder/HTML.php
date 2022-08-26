@@ -61,12 +61,19 @@ class HTML
     public function tagHTML(HTML $tag): HTML
     {
         if (!$tag->getParent()) {
-            throw new LogicException(sprintf("The tag with name %s should have a parent", $tag->getName()));
+            $tag->setParent($this);
         }
 
         $this->content[] = $tag;
 
         return $this->content[count($this->content) - 1];
+    }
+
+    public function setParent(HTML $html): HTML
+    {
+        $this->parent = $html;
+
+        return $this;
     }
 
     public function append(HTML $html): HTML
@@ -286,11 +293,6 @@ class HTML
         return count($this->attributes) === 0 && count($this->content) === 0 && count($this->appendHTML) === 0 && count($this->prependHTML) === 0;
     }
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
     /**
      * @throws LogicException
      */
@@ -322,7 +324,7 @@ class HTML
     /* GETTERS
     /*****************************************************************************/
 
-    private function getParent(): ?HTML
+    public function getParent(): ?HTML
     {
         return $this->parent;
     }
@@ -345,6 +347,11 @@ class HTML
     public function isTopLevel(): bool
     {
         return !(bool)$this->getParent();
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     /*****************************************************************************/
