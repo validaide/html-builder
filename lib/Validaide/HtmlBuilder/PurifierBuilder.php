@@ -9,7 +9,7 @@ use HTMLPurifier_Config;
 final class PurifierBuilder
 {
     public const SUPPORTED_ELEMENTS_FOR_DATA_ATTRIBUTES = [
-        'h1', 'h2', 'h3', 'div', 'a', 'span', 'i', 'ul', 'li', 'b',
+        'h1', 'h2', 'h3', 'div', 'a', 'span', 'i', 'ul', 'li', 'b', 'button'
     ];
 
     public const DATA_ATTRIBUTES = [
