@@ -133,7 +133,7 @@ class HTML
     {
         PurifierBuilder::checkAttribute($key, $this->name);
 
-        $this->attributes[$key] = htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE);
+        $this->attributes[$key] = htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
 
         return $this;
     }
