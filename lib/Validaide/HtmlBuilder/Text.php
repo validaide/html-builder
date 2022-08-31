@@ -1,10 +1,7 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Validaide\HtmlBuilder;
 
-/**
- * @author Mark Bijl <mark.bijl@validaide.com>
- */
 class Text
 {
     private string $text;
@@ -25,7 +22,13 @@ class Text
 
     public function render(): string
     {
-        return $this->text;
+        if ($this->isRaw()) {
+            return $this->text;
+        }
+
+        // Make sure the content is 'safe'
+        // @see http://php.net/manual/en/function.htmlspecialchars.php
+        return htmlspecialchars($this->text, ENT_QUOTES | ENT_SUBSTITUTE);
     }
 
     public function isRaw(): bool
