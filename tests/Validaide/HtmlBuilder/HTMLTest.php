@@ -81,15 +81,6 @@ class HTMLTest extends TestCase
         $this->assertEquals($ul, $li->getParent());
     }
 
-    public function testX()
-    {
-        $renderedString = '<button data-dmf-modal-title="title"><span class="fa-solid fa-chevron-circle-right"></span></button>';
-        //$renderedString = '<a class="btn btn-sm btn-primary btn-outline taskButton" href="/company_profile/questionnaire" title="Task Action"><span class="fa-solid fa-chevron-circle-right"></span></a>';
-
-        $purifier = PurifierBuilder::purifier();
-        $result = $purifier->purify($renderedString);
-        dd($renderedString, $result);
-    }
     /*****************************************************************************/
     /* Helpers
     /*****************************************************************************/
