@@ -1,13 +1,14 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Validaide\HtmlBuilder;
 
-use Exception;
 use InvalidArgumentException;
-use JetBrains\PhpStorm\Deprecated;
 use LogicException;
 use tidy;
 
+/**
+ * @author Mark Bijl <mark.bijl@validaide.com>
+ */
 class HTML
 {
     public const DIV  = 'div';
@@ -33,8 +34,6 @@ class HTML
 
     protected function __construct(string $name, ?HTML $parent = null)
     {
-        $name = preg_replace("/[^a-zA-Z0-9]+/", "", $name);
-
         $this->name       = $name;
         $this->parent     = $parent;
     }
@@ -55,13 +54,6 @@ class HTML
         return $this->content[count($this->content) - 1];
     }
 
-    public function tagHTML(HTML $tag): HTML
-    {
-        $this->content[] = $tag;
-
-        return $this->content[count($this->content) - 1];
-    }
-
     public function append(HTML $html): HTML
     {
         $this->appendHTML[] = $html;
@@ -76,15 +68,7 @@ class HTML
         return $this;
     }
 
-    /**
-     * $raw parameter is deprecated
-     * Use instead tagHTML in order to insert html into the mix
-     *
-     * @param bool $raw - Deprecated due to XSS injection concerns. Use tagHTML instead.
-     */
-    public function text(string $text,
-                         #[Deprecated]
-                         bool $raw = false): HTML
+    public function text(string $text, bool $raw = false): HTML
     {
         $text = new Text($text, $this, $raw);
 
@@ -95,10 +79,13 @@ class HTML
 
     public function list(array $array): HTML
     {
+        $list = '';
+
         foreach ($array as $element) {
-            $liElement = self::create('li', $this)->text($element);
-            $this->tagHTML($liElement);
+            $list .= self::create('li')->text($element)->html();
         }
+
+        $this->text($list, true);
 
         return $this;
     }
@@ -112,14 +99,9 @@ class HTML
         return $this;
     }
 
-    /**
-     * @throws Exception
-     */
     public function attr(string $key, string $value): self
     {
-        PurifierBuilder::checkAttribute($key, $this->name);
-
-        $this->attributes[$key] = htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE);
+        $this->attributes[$key] = $value;
 
         return $this;
     }
@@ -262,7 +244,13 @@ class HTML
             if ($tag instanceof HTML) {
                 $result .= $tag->html();
             } elseif ($tag instanceof Text) {
-                $result .= $tag->render();
+                if ($tag->isRaw()) {
+                    $result .= $tag->render();
+                } else {
+                    // Make sure the content is 'safe'
+                    // @see http://php.net/manual/en/function.htmlspecialchars.php
+                    $result .= htmlspecialchars($tag->render());
+                }
             }
         }
 
@@ -295,15 +283,7 @@ class HTML
             return (string)$tidy;
         }
 
-        $renderedString = $this->renderTag();
-
-        // CN: due to the recursive nature of this method call, we apply purifier only on the final result
-        if ($this->isTopLevel()) {
-            $purifier = PurifierBuilder::purifier();
-            return $purifier->purify($renderedString);
-        }
-
-        return $renderedString;
+        return $this->renderTag();
     }
 
     /*****************************************************************************/
@@ -328,11 +308,6 @@ class HTML
     public function getTitle(): ?string
     {
         return $this->attributes['title'] ?? null;
-    }
-
-    public function isTopLevel(): bool
-    {
-        return !(bool)$this->getParent();
     }
 
     /*****************************************************************************/
