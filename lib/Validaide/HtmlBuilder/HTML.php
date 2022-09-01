@@ -55,11 +55,25 @@ class HTML
         return $this->content[count($this->content) - 1];
     }
 
+    /**
+     * @throws LogicException
+     */
     public function tagHTML(HTML $tag): HTML
     {
+        if (!$tag->getParent()) {
+            $tag->setParent($this);
+        }
+
         $this->content[] = $tag;
 
         return $this->content[count($this->content) - 1];
+    }
+
+    public function setParent(HTML $html): HTML
+    {
+        $this->parent = $html;
+
+        return $this;
     }
 
     public function append(HTML $html): HTML
@@ -119,7 +133,7 @@ class HTML
     {
         PurifierBuilder::checkAttribute($key, $this->name);
 
-        $this->attributes[$key] = htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE);
+        $this->attributes[$key] = htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
 
         return $this;
     }
@@ -271,7 +285,7 @@ class HTML
 
     public function __toString(): string
     {
-        return $this->renderTag();
+        return $this->html();
     }
 
     public function isEmpty(): bool
@@ -310,7 +324,7 @@ class HTML
     /* GETTERS
     /*****************************************************************************/
 
-    private function getParent(): ?HTML
+    public function getParent(): ?HTML
     {
         return $this->parent;
     }
@@ -333,6 +347,11 @@ class HTML
     public function isTopLevel(): bool
     {
         return !(bool)$this->getParent();
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     /*****************************************************************************/
