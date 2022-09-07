@@ -46,6 +46,9 @@ final class PurifierBuilder
         'data-toggle',
         'data-trigger',
         'data-vd-c-path',
+        'aria-valuemax',
+        'aria-valuemin',
+        'aria-valuenow',
     ];
 
     public static function purifier(): HTMLPurifier
