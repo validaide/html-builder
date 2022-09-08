@@ -59,6 +59,7 @@ final class PurifierBuilder
         $config->set('AutoFormat.RemoveEmpty', false);
         $config->set('AutoFormat.RemoveEmpty.RemoveNbsp', false);
         $config->set('CSS.Trusted', true);
+        $config->set('Cache.SerializerPath', sys_get_temp_dir());
 
         $def = $config->getHTMLDefinition(true);
         if ($def) {
