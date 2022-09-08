@@ -60,6 +60,9 @@ final class PurifierBuilder
         $config->set('AutoFormat.RemoveEmpty.RemoveNbsp', false);
         $config->set('CSS.Trusted', true);
 
+        $cacheDirectory = '/tmp/';
+        $config->set('Cache.SerializerPath', $cacheDirectory);
+
         $def = $config->getHTMLDefinition(true);
         if ($def) {
             // CN - order matters here; e.g. addElement for button should be before adding attributes
