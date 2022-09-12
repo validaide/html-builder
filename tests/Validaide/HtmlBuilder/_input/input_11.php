@@ -6,12 +6,17 @@ return function () {
     return HTML::create('table')->attr('class', 'table table-default')
         ->tag('thead')
         ->tag('tr')
-        ->tag('th')->end()
+        ->tag('th')
+        ->text('Company Name')
+        ->end()
         ->end()
         ->end()
         ->tag('tbody')
         ->tag('tr')
-        ->tag('td')->end()
+        ->tag('td')
+        ->text('Validaide B.V.')
         ->end()
-        ->end();
+        ->end()
+        ->end()
+        ;
 };
