@@ -10,12 +10,20 @@ use HTMLPurifier_HTMLDefinition;
 final class PurifierBuilder
 {
     public const SUPPORTED_ELEMENTS_FOR_DATA_ATTRIBUTES = [
-        'h1', 'h2', 'h3', 'div', 'a', 'span', 'i', 'ul', 'li', 'b', 'button', 'img'
+        'h1', 'h2', 'h3', 'div', 'a', 'span', 'i', 'ul', 'li', 'b', 'button', 'img',
     ];
 
     public const DATA_ATTRIBUTES = [
+        'data-animation',
         'data-available',
         'data-available-certificates',
+        'data-bs-animation',
+        'data-bs-dismiss',
+        'data-bs-parent',
+        'data-bs-placement',
+        'data-bs-target',
+        'data-bs-title',
+        'data-bs-toggle',
         'data-capability-id',
         'data-company-name',
         'data-content',
@@ -37,12 +45,14 @@ final class PurifierBuilder
         'data-number-of-available-views',
         'data-number-of-images',
         'data-old-value',
+        'data-parent',
         'data-placement',
         'data-quality-index',
         'data-target',
         'data-task-action',
         'data-task-id',
         'data-their-view-id',
+        'data-title',
         'data-toggle',
         'data-trigger',
         'data-vd-c-path',
@@ -93,8 +103,8 @@ final class PurifierBuilder
     {
         $def->addBlankElement('data-*');
 
-        foreach(self::SUPPORTED_ELEMENTS_FOR_DATA_ATTRIBUTES as $element) {
-            foreach(self::DATA_ATTRIBUTES as $dataAttribute) {
+        foreach (self::SUPPORTED_ELEMENTS_FOR_DATA_ATTRIBUTES as $element) {
+            foreach (self::DATA_ATTRIBUTES as $dataAttribute) {
                 $def->addAttribute($element, $dataAttribute, 'Text');
             }
         }
@@ -102,7 +112,7 @@ final class PurifierBuilder
 
     private static function enrichGenericDefinitions(HTMLPurifier_HTMLDefinition $def): void
     {
-        foreach(['i', 'span', 'div'] as $element) {
+        foreach (['i', 'span', 'div'] as $element) {
             $def->addAttribute($element, 'aria-hidden', 'Text');
         }
 
