@@ -7,7 +7,7 @@ return function () {
         ->attr('id', 'my-div')
         ->text('hello')
         ->tag('h1')
-        ->attr('style', 'font-style:italic')
+        ->attr('style', 'font-style: italic')
         ->text('beauty')
         ->end();
 };
