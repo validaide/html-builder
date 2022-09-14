@@ -5,12 +5,11 @@ namespace Validaide\HtmlBuilder;
 use Exception;
 use HTMLPurifier;
 use HTMLPurifier_Config;
-use HTMLPurifier_HTMLDefinition;
 
 final class PurifierBuilder
 {
     public const SUPPORTED_ELEMENTS_FOR_DATA_ATTRIBUTES = [
-        'h1', 'h2', 'h3', 'div', 'a', 'span', 'i', 'ul', 'li', 'b', 'button', 'img'
+        'h1', 'h2', 'h3', 'div', 'a', 'span', 'i', 'ul', 'li', 'b',
     ];
 
     public const DATA_ATTRIBUTES = [
@@ -20,7 +19,6 @@ final class PurifierBuilder
         'data-company-name',
         'data-content',
         'data-core-question',
-        'data-current-value',
         'data-day-of-operation',
         'data-day-of-operation-available',
         'data-day-of-operation-selected',
@@ -36,7 +34,6 @@ final class PurifierBuilder
         'data-my-id',
         'data-number-of-available-views',
         'data-number-of-images',
-        'data-old-value',
         'data-placement',
         'data-quality-index',
         'data-target',
@@ -46,9 +43,6 @@ final class PurifierBuilder
         'data-toggle',
         'data-trigger',
         'data-vd-c-path',
-        'aria-valuemax',
-        'aria-valuemin',
-        'aria-valuenow',
     ];
 
     public static function purifier(): HTMLPurifier
@@ -58,15 +52,8 @@ final class PurifierBuilder
         $config->set('Attr.EnableID', true);
         $config->set('AutoFormat.RemoveEmpty', false);
         $config->set('AutoFormat.RemoveEmpty.RemoveNbsp', false);
-        $config->set('CSS.Trusted', true);
-        $config->set('Cache.SerializerPath', sys_get_temp_dir());
 
-        $def = $config->getHTMLDefinition(true);
-        if ($def) {
-            // CN - order matters here; e.g. addElement for button should be before adding attributes
-            self::enrichGenericDefinitions($def);
-            self::enrichDataDefinitions($def);
-        }
+        self::enrichDataDefinitions($config);
 
         return new HTMLPurifier($config);
     }
@@ -89,8 +76,13 @@ final class PurifierBuilder
         }
     }
 
-    private static function enrichDataDefinitions(HTMLPurifier_HTMLDefinition $def): void
+    private static function enrichDataDefinitions(HTMLPurifier_Config $config): void
     {
+        $def = $config->getHTMLDefinition(true);
+        if (is_null($def)) {
+            return;
+        }
+
         $def->addBlankElement('data-*');
 
         foreach(self::SUPPORTED_ELEMENTS_FOR_DATA_ATTRIBUTES as $element) {
@@ -98,14 +90,5 @@ final class PurifierBuilder
                 $def->addAttribute($element, $dataAttribute, 'Text');
             }
         }
-    }
-
-    private static function enrichGenericDefinitions(HTMLPurifier_HTMLDefinition $def): void
-    {
-        foreach(['i', 'span', 'div'] as $element) {
-            $def->addAttribute($element, 'aria-hidden', 'Text');
-        }
-
-        $def->addElement('button', 'Block', 'Flow', 'Common');
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Validaide\HtmlBuilder;
 
@@ -55,25 +55,11 @@ class HTML
         return $this->content[count($this->content) - 1];
     }
 
-    /**
-     * @throws LogicException
-     */
     public function tagHTML(HTML $tag): HTML
     {
-        if (!$tag->getParent()) {
-            $tag->setParent($this);
-        }
-
         $this->content[] = $tag;
 
         return $this->content[count($this->content) - 1];
-    }
-
-    public function setParent(HTML $html): HTML
-    {
-        $this->parent = $html;
-
-        return $this;
     }
 
     public function append(HTML $html): HTML
@@ -133,7 +119,7 @@ class HTML
     {
         PurifierBuilder::checkAttribute($key, $this->name);
 
-        $this->attributes[$key] = htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
+        $this->attributes[$key] = htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE);
 
         return $this;
     }
@@ -285,7 +271,7 @@ class HTML
 
     public function __toString(): string
     {
-        return $this->html();
+        return $this->renderTag();
     }
 
     public function isEmpty(): bool
@@ -324,7 +310,7 @@ class HTML
     /* GETTERS
     /*****************************************************************************/
 
-    public function getParent(): ?HTML
+    private function getParent(): ?HTML
     {
         return $this->parent;
     }
@@ -347,11 +333,6 @@ class HTML
     public function isTopLevel(): bool
     {
         return !(bool)$this->getParent();
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     /*****************************************************************************/
