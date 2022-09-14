@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Validaide\HtmlBuilder;
 
@@ -55,9 +55,6 @@ class HTML
         return $this->content[count($this->content) - 1];
     }
 
-    /**
-     * @throws LogicException
-     */
     public function tagHTML(HTML $tag): HTML
     {
         if (!$tag->getParent()) {
@@ -344,14 +341,14 @@ class HTML
         return $this->attributes['title'] ?? null;
     }
 
-    public function isTopLevel(): bool
-    {
-        return !(bool)$this->getParent();
-    }
-
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function isTopLevel(): bool
+    {
+        return !(bool)$this->getParent();
     }
 
     /*****************************************************************************/

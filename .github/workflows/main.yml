@@ -2,7 +2,12 @@ name: Build & Test Library
 on: [push]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+       matrix:
+         operating-system: [ubuntu-latest]
+         php-versions: ['7.4', '8.0', '8.1']
+    name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -10,8 +15,9 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: ${{ matrix.php-versions }}
           tools: composer:v2,phpstan
+          extensions: tidy
         env:
           COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

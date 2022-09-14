@@ -93,8 +93,8 @@ final class PurifierBuilder
     {
         $def->addBlankElement('data-*');
 
-        foreach(self::SUPPORTED_ELEMENTS_FOR_DATA_ATTRIBUTES as $element) {
-            foreach(self::DATA_ATTRIBUTES as $dataAttribute) {
+        foreach (self::SUPPORTED_ELEMENTS_FOR_DATA_ATTRIBUTES as $element) {
+            foreach (self::DATA_ATTRIBUTES as $dataAttribute) {
                 $def->addAttribute($element, $dataAttribute, 'Text');
             }
         }
@@ -102,7 +102,7 @@ final class PurifierBuilder
 
     private static function enrichGenericDefinitions(HTMLPurifier_HTMLDefinition $def): void
     {
-        foreach(['i', 'span', 'div'] as $element) {
+        foreach (['i', 'span', 'div'] as $element) {
             $def->addAttribute($element, 'aria-hidden', 'Text');
         }
 
