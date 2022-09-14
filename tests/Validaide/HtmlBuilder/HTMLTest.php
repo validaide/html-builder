@@ -5,8 +5,10 @@ namespace Tests\Validaide\HtmlBuilder;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use Validaide\HtmlBuilder\HTML;
-use Validaide\HtmlBuilder\PurifierBuilder;
 
+/**
+ * @author Mark Bijl <mark.bijl@validaide.com>
+ */
 class HTMLTest extends TestCase
 {
     /*****************************************************************************/
@@ -67,20 +69,6 @@ class HTMLTest extends TestCase
         // Assert
         $this->assertEquals('<h1 data-content="value"></h1>', $h1->html());
     }
-
-    public function testIncludedTagsShouldHaveAParent()
-    {
-        // Arrange
-        $ul = HTML::create(HTML::LIST);
-        $li = HTML::create('li');
-
-        // Act
-        $ul->tagHTML($li);
-
-        // Assert
-        $this->assertEquals($ul, $li->getParent());
-    }
-
     /*****************************************************************************/
     /* Helpers
     /*****************************************************************************/
