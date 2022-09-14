@@ -53,22 +53,28 @@ final class PurifierBuilder
 
     public static function purifier(): HTMLPurifier
     {
-        $config = HTMLPurifier_Config::createDefault();
-        // $config->set('Cache.DefinitionImpl', null); // remove this later, testing only
-        $config->set('Attr.EnableID', true);
-        $config->set('AutoFormat.RemoveEmpty', false);
-        $config->set('AutoFormat.RemoveEmpty.RemoveNbsp', false);
-        $config->set('CSS.Trusted', true);
-        $config->set('Cache.SerializerPath', sys_get_temp_dir());
+        static $purifier;
 
-        $def = $config->getHTMLDefinition(true);
-        if ($def) {
-            // CN - order matters here; e.g. addElement for button should be before adding attributes
-            self::enrichGenericDefinitions($def);
-            self::enrichDataDefinitions($def);
+        if (is_null($purifier)) {
+            $config = HTMLPurifier_Config::createDefault();
+            // $config->set('Cache.DefinitionImpl', null); // remove this later, testing only
+            $config->set('Attr.EnableID', true);
+            $config->set('AutoFormat.RemoveEmpty', false);
+            $config->set('AutoFormat.RemoveEmpty.RemoveNbsp', false);
+            $config->set('CSS.Trusted', true);
+            $config->set('Cache.SerializerPath', sys_get_temp_dir());
+
+            $def = $config->getHTMLDefinition(true);
+            if ($def) {
+                // CN - order matters here; e.g. addElement for button should be before adding attributes
+                self::enrichGenericDefinitions($def);
+                self::enrichDataDefinitions($def);
+            }
+
+            $purifier = new HTMLPurifier($config);
         }
 
-        return new HTMLPurifier($config);
+        return $purifier;
     }
 
     /**
