@@ -222,11 +222,11 @@ class HTML
         );
 
         if (count((array) $this->appendHTML) > 0) {
-            $renderedString .= $this->renderAppendedString();
+            $renderedString = sprintf("%s %s", $renderedString, $this->renderAppendedString());
         }
 
         if (count((array) $this->prependHTML) > 0) {
-            $renderedString = sprintf("%s%s", $this->renderPrependedString(), $renderedString);
+            $renderedString = sprintf("%s %s", $this->renderPrependedString(), $renderedString);
         }
 
         return $renderedString;
