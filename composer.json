@@ -23,14 +23,15 @@
     }
   },
   "require": {
-    "php": "^8.1",
+    "php": "^7.4 | ^8.1",
     "exercise/htmlpurifier-bundle": "^4.0"
   },
   "require-dev": {
     "ext-tidy": "*",
     "brianium/paratest": "^6.4",
     "jetbrains/phpstorm-attributes": "^1.0",
+    "phpstan/phpstan": "^1.9",
     "phpunit/phpunit": "^9.0",
-    "rector/rector": "^0.11"
+    "rector/rector": "^0.15.0"
   }
 }

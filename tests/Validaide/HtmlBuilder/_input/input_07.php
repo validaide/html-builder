@@ -2,8 +2,6 @@
 
 use Validaide\HtmlBuilder\HTML;
 
-return function () {
-    return HTML::create('div')
-        ->tag('h1')
-        ->end();
-};
+return fn() => HTML::create('div')
+    ->tag('h1')
+    ->end();
