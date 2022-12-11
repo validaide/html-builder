@@ -2,17 +2,18 @@
 
 namespace Validaide\HtmlBuilder;
 
+use Stringable;
 use Exception;
 use InvalidArgumentException;
 use JetBrains\PhpStorm\Deprecated;
 use LogicException;
 use tidy;
 
-class HTML
+class HTML implements Stringable
 {
-    public const DIV  = 'div';
-    public const SPAN = 'span';
-    public const LIST = 'ul';
+    final public const DIV  = 'div';
+    final public const SPAN = 'span';
+    final public const LIST = 'ul';
 
     protected static ?HTML $instance = null;
 
@@ -23,20 +24,17 @@ class HTML
     /** @var HTML[]|Text */
     private array $content = [];
 
-    private ?HTML $parent;
-
     /** @var null|HTML[] */
     private ?array $appendHTML = [];
 
     /** @var null|HTML[] */
     private ?array $prependHTML = [];
 
-    protected function __construct(string $name, ?HTML $parent = null)
+    protected function __construct(string $name, private ?HTML $parent = null)
     {
         $name = preg_replace("/[^a-zA-Z0-9]+/", "", $name);
 
         $this->name       = $name;
-        $this->parent     = $parent;
     }
 
     public static function create(string $name, HTML $parent = null): HTML
@@ -357,13 +355,10 @@ class HTML
 
     public function generateClassString($value): string
     {
-        switch (true) {
-            case is_array($value):
-                return implode(' ', $value);
-            case is_string($value):
-                return $value;
-            default:
-                throw new InvalidArgumentException('Class method accepts only string or array as an argument');
-        }
+        return match (true) {
+            is_array($value) => implode(' ', $value),
+            is_string($value) => $value,
+            default => throw new InvalidArgumentException('Class method accepts only string or array as an argument'),
+        };
     }
 }

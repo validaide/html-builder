@@ -13,14 +13,10 @@ class HTMLTest extends TestCase
 {
     /*****************************************************************************/
     /* Tests
-    /*****************************************************************************/
-
+       /*****************************************************************************/
     /**
      * @dataProvider inputCommandToOutputFilesProvider
      *
-     * @param string $inputCommandFilePath
-     * @param string $outputFilePathFlat
-     * @param string $outputFilePathPretty
      *
      * @group        grain
      */
@@ -69,13 +65,6 @@ class HTMLTest extends TestCase
         // Assert
         $this->assertEquals('<h1 data-content="value"></h1>', $h1->html());
     }
-    /*****************************************************************************/
-    /* Helpers
-    /*****************************************************************************/
-
-    /**
-     * @return array
-     */
     public function inputCommandToOutputFilesProvider(): array
     {
         $baseDir = __DIR__;
@@ -88,11 +77,6 @@ class HTMLTest extends TestCase
         );
     }
 
-    /**
-     * @param HTML   $html
-     * @param string $outputFilePathFlat
-     * @param string $outputFilePathPretty
-     */
     protected function assertEqualsToHtmlFile(HTML $html, string $outputFilePathFlat, string $outputFilePathPretty)
     {
         $this->assertEquals(file_get_contents($outputFilePathFlat), $html->html());
