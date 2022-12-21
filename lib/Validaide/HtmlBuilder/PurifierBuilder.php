@@ -56,13 +56,18 @@ final class PurifierBuilder
         static $purifier;
 
         if (is_null($purifier)) {
+            $cachePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'HTMLPurifier';
+            if (!is_dir($cachePath)) {
+                mkdir($cachePath, 0770, TRUE);
+            }
+
             $config = HTMLPurifier_Config::createDefault();
             // $config->set('Cache.DefinitionImpl', null); // remove this later, testing only
             $config->set('Attr.EnableID', true);
             $config->set('AutoFormat.RemoveEmpty', false);
             $config->set('AutoFormat.RemoveEmpty.RemoveNbsp', false);
             $config->set('CSS.Trusted', true);
-            $config->set('Cache.SerializerPath', sys_get_temp_dir());
+            $config->set('Cache.SerializerPath', $cachePath);
 
             $def = $config->getHTMLDefinition(true);
             if ($def) {
