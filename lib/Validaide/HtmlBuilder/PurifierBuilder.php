@@ -10,7 +10,7 @@ use HTMLPurifier_HTMLDefinition;
 final class PurifierBuilder
 {
     public const SUPPORTED_ELEMENTS_FOR_DATA_ATTRIBUTES = [
-        'h1', 'h2', 'h3', 'div', 'a', 'span', 'i', 'ul', 'li', 'b', 'button', 'img'
+        'h1', 'h2', 'h3', 'div', 'a', 'span', 'i', 'ul', 'li', 'b', 'button', 'img',
     ];
 
     public const DATA_ATTRIBUTES = [
@@ -40,6 +40,7 @@ final class PurifierBuilder
         'data-dmf-modal-title',
         'data-dmf-modal-type',
         'data-html',
+        'data-id',
         'data-my-id',
         'data-number-of-available-views',
         'data-number-of-images',
@@ -55,6 +56,8 @@ final class PurifierBuilder
         'data-toggle',
         'data-trigger',
         'data-vd-c-path',
+        'aria-controls',
+        'aria-expanded',
         'aria-valuemax',
         'aria-valuemin',
         'aria-valuenow',
