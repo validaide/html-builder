@@ -57,7 +57,6 @@ final class PurifierBuilder
 
         if (is_null($purifier)) {
             $config = HTMLPurifier_Config::createDefault();
-            // $config->set('Cache.DefinitionImpl', null); // remove this later, testing only
             $config->set('Attr.EnableID', true);
             $config->set('AutoFormat.RemoveEmpty', false);
             $config->set('AutoFormat.RemoveEmpty.RemoveNbsp', false);

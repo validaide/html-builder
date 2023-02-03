@@ -4,8 +4,5 @@ use Validaide\HtmlBuilder\HTML;
 
 // class with XSS injection
 
-return function () {
-    return HTML::create('div')
-        ->class("\"><script>alert('XSS')</script>")
-        ;
-};
+return fn() => HTML::create('div')
+    ->class("\"><script>alert('XSS')</script>");

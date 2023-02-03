@@ -2,6 +2,4 @@
 
 use Validaide\HtmlBuilder\HTML;
 
-return function () {
-    return HTML::create('h1');
-};
+return fn() => HTML::create('h1');
