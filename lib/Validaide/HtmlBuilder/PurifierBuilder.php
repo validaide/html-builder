@@ -39,6 +39,7 @@ final class PurifierBuilder
         'data-dmf-form-url',
         'data-dmf-modal-title',
         'data-dmf-modal-type',
+        'data-dmf-modal-size',
         'data-html',
         'data-id',
         'data-my-id',
