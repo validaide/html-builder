@@ -69,6 +69,31 @@ class HTMLTest extends TestCase
         // Assert
         $this->assertEquals('<h1 data-content="value"></h1>', $h1->html());
     }
+
+    public function testSupportedAttributeOrDataBS3Element()
+    {
+        // Arrange
+        $h1 = HTML::create('h1');
+
+        // Act
+        $h1->attr('data-toggle', 'dialog');
+
+        // Assert
+        $this->assertEquals('<h1 data-toggle="dialog"></h1>', $h1->html());
+    }
+
+    public function testSupportedAttributeOrDataBS5Element()
+    {
+        // Arrange
+        $h1 = HTML::create('h1');
+
+        // Act
+        $h1->attr('data-bs-toggle', 'dialog');
+
+        // Assert
+        $this->assertEquals('<h1 data-bs-toggle="dialog"></h1>', $h1->html());
+    }
+
     /*****************************************************************************/
     /* Helpers
     /*****************************************************************************/
