@@ -13,12 +13,10 @@ class HTMLTest extends TestCase
 {
     /*****************************************************************************/
     /* Tests
-       /*****************************************************************************/
+    /*****************************************************************************/
+
     /**
      * @dataProvider inputCommandToOutputFilesProvider
-     *
-     *
-     * @group        grain
      */
     public function testOutputs(string $inputCommandFilePath, string $outputFilePathFlat, string $outputFilePathPretty)
     {
@@ -65,6 +63,35 @@ class HTMLTest extends TestCase
         // Assert
         $this->assertEquals('<h1 data-content="value"></h1>', $h1->html());
     }
+
+    public function testSupportedAttributeOrDataBS3Element()
+    {
+        // Arrange
+        $h1 = HTML::create('h1');
+
+        // Act
+        $h1->attr('data-toggle', 'dialog');
+
+        // Assert
+        $this->assertEquals('<h1 data-toggle="dialog"></h1>', $h1->html());
+    }
+
+    public function testSupportedAttributeOrDataBS5Element()
+    {
+        // Arrange
+        $h1 = HTML::create('h1');
+
+        // Act
+        $h1->attr('data-bs-toggle', 'dialog');
+
+        // Assert
+        $this->assertEquals('<h1 data-bs-toggle="dialog"></h1>', $h1->html());
+    }
+
+    /*****************************************************************************/
+    /* Helpers
+    /*****************************************************************************/
+
     public function inputCommandToOutputFilesProvider(): array
     {
         $baseDir = __DIR__;
@@ -79,7 +106,7 @@ class HTMLTest extends TestCase
 
     protected function assertEqualsToHtmlFile(HTML $html, string $outputFilePathFlat, string $outputFilePathPretty)
     {
-        $this->assertEquals(file_get_contents($outputFilePathFlat), $html->html());
-        $this->assertEquals(file_get_contents($outputFilePathPretty), $html->html(true));
+        $this->assertEquals(file_get_contents($outputFilePathFlat), $html->html(), sprintf('Flat File: %s', $outputFilePathFlat));
+        $this->assertEquals(file_get_contents($outputFilePathPretty), $html->html(true), sprintf('Pretty File: %s', $outputFilePathPretty));
     }
 }

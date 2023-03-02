@@ -203,10 +203,10 @@ class HTML implements Stringable
     public function dataToggle(string $value, ?string $dataPlacement = null): self
     {
         if ($dataPlacement) {
-            $this->attr('data-placement', $dataPlacement);
+            $this->attr('data-bs-placement', $dataPlacement);
         }
 
-        return $this->attr('data-toggle', $value);
+        return $this->attr('data-bs-toggle', $value);
     }
 
     private function renderTag(): string
@@ -220,11 +220,11 @@ class HTML implements Stringable
         );
 
         if (count((array) $this->appendHTML) > 0) {
-            $renderedString .= $this->renderAppendedString();
+            $renderedString = sprintf("%s %s", $renderedString, $this->renderAppendedString());
         }
 
         if (count((array) $this->prependHTML) > 0) {
-            $renderedString = sprintf("%s%s", $this->renderPrependedString(), $renderedString);
+            $renderedString = sprintf("%s %s", $this->renderPrependedString(), $renderedString);
         }
 
         return $renderedString;
@@ -299,9 +299,9 @@ class HTML implements Stringable
             }
 
             $tidy = new Tidy();
-            $tidy->parseString($this->renderTag(), ['indent' => true, 'show-body-only' => true, 'indent-spaces' => 4, 'quote-ampersand' => false], 'utf8');
+            $tidy->parseString($this->renderTag(), ['indent' => true, 'show-body-only' => true, 'indent-spaces' => 4, 'quote-ampersand' => false, 'wrap' => 2000], 'utf8');
 
-            return (string)$tidy;
+            return tidy_get_output($tidy);
         }
 
         $renderedString = $this->renderTag();
