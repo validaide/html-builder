@@ -9,13 +9,10 @@ class HTML_XSS_Test extends TestCase
 {
     /*****************************************************************************/
     /* Tests
-    /*****************************************************************************/
-
+       /*****************************************************************************/
     /**
      * @dataProvider inputCommandToOutputFilesProvider
      *
-     * @param string $inputCommandFilePath
-     * @param string $outputFilePath
      *
      * @group        grain
      */
@@ -27,13 +24,6 @@ class HTML_XSS_Test extends TestCase
         $this->assertEqualsToHtmlFile($html, $outputFilePath);
     }
 
-    /*****************************************************************************/
-    /* Helpers
-    /*****************************************************************************/
-
-    /**
-     * @return array
-     */
     public function inputCommandToOutputFilesProvider(): array
     {
         $baseDir = __DIR__;
@@ -45,10 +35,6 @@ class HTML_XSS_Test extends TestCase
         );
     }
 
-    /**
-     * @param HTML   $html
-     * @param string $outputFilePathFlat
-     */
     protected function assertEqualsToHtmlFile(HTML $html, string $outputFilePathFlat)
     {
         $this->assertEquals(file_get_contents($outputFilePathFlat), $html->html());

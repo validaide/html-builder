@@ -6,4 +6,4 @@ return fn() => HTML::create('a')
     ->dataToggle('tooltip', 'bottom')
     ->style('height: 6px;')
     ->title('someTitle')
-    ->href('link');
+    ->href('https://localhost');

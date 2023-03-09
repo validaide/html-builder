@@ -17,12 +17,6 @@ class HTMLTest extends TestCase
 
     /**
      * @dataProvider inputCommandToOutputFilesProvider
-     *
-     * @param string $inputCommandFilePath
-     * @param string $outputFilePathFlat
-     * @param string $outputFilePathPretty
-     *
-     * @group        grain
      */
     public function testOutputs(string $inputCommandFilePath, string $outputFilePathFlat, string $outputFilePathPretty)
     {
@@ -98,9 +92,6 @@ class HTMLTest extends TestCase
     /* Helpers
     /*****************************************************************************/
 
-    /**
-     * @return array
-     */
     public function inputCommandToOutputFilesProvider(): array
     {
         $baseDir = __DIR__;
@@ -113,14 +104,9 @@ class HTMLTest extends TestCase
         );
     }
 
-    /**
-     * @param HTML   $html
-     * @param string $outputFilePathFlat
-     * @param string $outputFilePathPretty
-     */
     protected function assertEqualsToHtmlFile(HTML $html, string $outputFilePathFlat, string $outputFilePathPretty)
     {
-        $this->assertEquals(file_get_contents($outputFilePathFlat), $html->html());
-        $this->assertEquals(file_get_contents($outputFilePathPretty), $html->html(true));
+        $this->assertEquals(file_get_contents($outputFilePathFlat), $html->html(), sprintf('Flat File: %s', $outputFilePathFlat));
+        $this->assertEquals(file_get_contents($outputFilePathPretty), $html->html(true), sprintf('Pretty File: %s', $outputFilePathPretty));
     }
 }
