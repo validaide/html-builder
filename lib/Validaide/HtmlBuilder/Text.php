@@ -2,17 +2,11 @@
 
 namespace Validaide\HtmlBuilder;
 
-class Text
+use Stringable;
+class Text implements Stringable
 {
-    private string $text;
-    private ?HTML $parent;
-    private bool $raw;
-
-    public function __construct(string $text, ?HTML $parent = null, bool $raw = false)
+    public function __construct(private readonly string $text, private readonly ?HTML $parent = null, private readonly bool $raw = false)
     {
-        $this->text   = $text;
-        $this->parent = $parent;
-        $this->raw    = $raw;
     }
 
     public function __toString(): string

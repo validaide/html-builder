@@ -94,7 +94,7 @@ final class PurifierBuilder
      */
     public static function checkAttribute(string $attributeName, string $elementName)
     {
-        if (substr($attributeName, 0, 5) !== 'data-') {
+        if (!str_starts_with($attributeName, 'data-')) {
             return;
         }
 
