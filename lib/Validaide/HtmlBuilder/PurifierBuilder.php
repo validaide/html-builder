@@ -75,6 +75,8 @@ final class PurifierBuilder
             $config->set('AutoFormat.RemoveEmpty.RemoveNbsp', false);
             $config->set('CSS.Trusted', true);
             $config->set('Cache.SerializerPath', sys_get_temp_dir());
+            // Allow '_blank' as frame target, see: https://www.pivotaltracker.com/story/show/184089749
+            $config->set('Attr.AllowedFrameTargets', ['_blank']);
 
             $def = $config->getHTMLDefinition(true);
             if ($def) {
