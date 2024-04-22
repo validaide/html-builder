@@ -59,6 +59,7 @@ final class PurifierBuilder
         'data-title',
         'data-toggle',
         'data-trigger',
+        'data-url',
         'data-type',
         'data-vd-c-path',
         'aria-controls',
