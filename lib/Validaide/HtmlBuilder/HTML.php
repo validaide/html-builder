@@ -37,7 +37,7 @@ class HTML implements Stringable
         $this->name       = $name;
     }
 
-    public static function create(string $name, HTML $parent = null): HTML
+    public static function create(string $name, ?HTML $parent = null): HTML
     {
         self::$instance = new self($name, $parent);
 
