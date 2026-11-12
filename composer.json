@@ -24,7 +24,7 @@
     },
     "require": {
         "php": "^8.4",
-        "exercise/htmlpurifier-bundle": "^4.0"
+        "ezyang/htmlpurifier": "^4.14"
     },
     "require-dev": {
         "ext-tidy": "*",
